@@ -1,4 +1,4 @@
-package com.toe.chowder;
+package com.toe.chowder.sample;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

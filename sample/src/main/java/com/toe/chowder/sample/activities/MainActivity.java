@@ -1,4 +1,4 @@
-package com.toe.chowder.activities;
+package com.toe.chowder.sample.activities;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -17,7 +17,7 @@ import com.toe.chowder.R;
  */
 public class MainActivity extends AppCompatActivity {
 
-    //Test parameters you can replace these with your own Paybill details
+    //Test parameters you can replace these with your own PayBill details
     String MERCHANT_ID = "898998";
     String PASSKEY = "ada798a925b5ec20cc331c1b0048c88186735405ab8d59f968ed4dab89da5515";
 
@@ -43,20 +43,25 @@ public class MainActivity extends AppCompatActivity {
                 String amount = etAmount.getText().toString().trim();
                 String phoneNumber = etPhoneNumber.getText().toString().trim();
 
-                Chowder chowder = new Chowder(MainActivity.this, MERCHANT_ID, PASSKEY);
-                //Product ID has to have 13 digits
-                chowder.processPayment("1717171717171", amount, phoneNumber);
-                chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
-                        .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                //Do something because the user has completed payment
-                                Toast.makeText(getApplicationContext(), "User has successfully paid", Toast.LENGTH_LONG).show();
-                                dialog.dismiss();
-                            }
-                        });
-
-                //That's it!
+                makePayment(amount, phoneNumber);
             }
         });
+    }
+
+    private void makePayment(String amount, String phoneNumber) {
+        Chowder chowder = new Chowder(MainActivity.this, MERCHANT_ID, PASSKEY);
+        //Product ID has to have 13 digits
+        chowder.processPayment("1717171717171", amount, phoneNumber);
+        chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Do something because the user has completed payment
+                        Toast.makeText(getApplicationContext(), "User has successfully paid", Toast.LENGTH_LONG).show();
+                        dialog.dismiss();
+                    }
+                });
+
+        //That's it! You can now process payments using the M-Pesa API
+        //IMPORTANT: Any cash you send to the test PayBill number is no-refundable, so use small amounts to test
     }
 }
