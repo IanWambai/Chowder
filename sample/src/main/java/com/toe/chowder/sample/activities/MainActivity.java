@@ -42,26 +42,36 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String amount = etAmount.getText().toString().trim();
                 String phoneNumber = etPhoneNumber.getText().toString().trim();
+                //Your product's ID must have 13 digits
+                String productId = "1717171717171";
 
-                makePayment(amount, phoneNumber);
+                makePayment(productId, amount, phoneNumber);
+
+                //      The Merchant captures the payment details and prepares call to the SAG’s endpoint
+                //      The Merchant invokes SAG’s processCheckOut interface
+                //      The SAG validates the request sent and returns a response
+                //      Merchant receives the processCheckoutResponse parameters namely
+                //      TRX_ID, ENC_PARAMS, RETURN_CODE, DESCRIPTION and CUST_MSG (Customer message)
+                //      The merchant is supposed to display the CUST_MSG to the customer after which the merchant should invoke SAG’s confirmPaymentRequest interface to confirm the transaction
+                //      The system will push a USSD menu to the customer and prompt the customer to enter their BONGA PIN and any other validation information.
+                //      The transaction is processed on M-PESA and a callback is executed after completion of the transaction
             }
         });
     }
 
-    private void makePayment(String amount, String phoneNumber) {
+    private void makePayment(String productId, String amount, String phoneNumber) {
         Chowder chowder = new Chowder(MainActivity.this, MERCHANT_ID, PASSKEY);
-        //Product ID has to have 13 digits
-        chowder.processPayment("1717171717171", amount, phoneNumber);
+        chowder.processPayment(productId, amount, phoneNumber);
         chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
-                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Finish", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //Do something because the user has completed payment
-                        Toast.makeText(getApplicationContext(), "User has successfully paid", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "User has successfully paid. You may now provide them with your product or service", Toast.LENGTH_LONG).show();
                         dialog.dismiss();
                     }
                 });
 
-        //That's it! You can now process payments using the M-Pesa API
-        //IMPORTANT: Any cash you send to the test PayBill number is no-refundable, so use small amounts to test
+        //      That's it! You can now process payments using the M-Pesa API
+        //      IMPORTANT: Any cash you send to the test PayBill number is no-refundable, so use small amounts to test
     }
 }
