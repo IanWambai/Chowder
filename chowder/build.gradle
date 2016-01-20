@@ -1,30 +1,30 @@
 apply plugin: 'com.android.library'
-apply from: 'https://raw.githubusercontent.com/IanWambai/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/IanWambai/JCenter/master/bintrayv1.gradle'
+//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'chowder'
-
-    publishedGroupId = 'com.toe.chowder'
-    libraryName = 'Chowder'
-    artifact = 'chowder'
-
-    libraryDescription = 'An M-Pesa online checkout library for Android'
-
-    siteUrl = 'https://github.com/IanWambai/Chowder'
-    gitUrl = 'https://github.com/IanWambai/Chowder.git'
-
-    libraryVersion = '0.5.0'
-
-    developerId = 'ianwambai'
-    developerName = 'Ian Wambai'
-    developerEmail = 'ianwambai@gmail.com'
-
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
-}
+//ext {
+//    bintrayRepo = 'maven'
+//    bintrayName = 'chowder'
+//
+//    publishedGroupId = 'com.toe.chowder'
+//    libraryName = 'Chowder'
+//    artifact = 'chowder'
+//
+//    libraryDescription = 'An M-Pesa online checkout library for Android'
+//
+//    siteUrl = 'https://github.com/IanWambai/Chowder'
+//    gitUrl = 'https://github.com/IanWambai/Chowder.git'
+//
+//    libraryVersion = '0.5.0'
+//
+//    developerId = 'ianwambai'
+//    developerName = 'Ian Wambai'
+//    developerEmail = 'ianwambai@gmail.com'
+//
+//    licenseName = 'The Apache Software License, Version 2.0'
+//    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//    allLicenses = ["Apache-2.0"]
+//}
 
 android {
     compileSdkVersion 23
@@ -48,4 +48,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
+
+    //SOAP Library
+    compile 'com.alexgilleran:icesoap:1.1.0'
 }

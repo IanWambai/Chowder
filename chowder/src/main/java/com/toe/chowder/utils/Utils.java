@@ -8,8 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
-import io.fabric.sdk.android.services.network.HttpRequest;
-
 /**
  * Created by Wednesday on 1/16/2016.
  */
@@ -49,7 +47,9 @@ public class Utils {
         }
 
         //Encode hash to base64
-        String password = HttpRequest.Base64.encode(hash);
+//        String password = HttpRequest.Base64.encode(hash);
+
+        String password = "change-this";
 
         return password;
     }

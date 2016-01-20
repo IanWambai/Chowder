@@ -41,8 +41,8 @@ public class Chowder {
 
 //    Chowder chowder = new Chowder(YourActivity.this, getString(R.string.merchant_id), getString(R.string.passkey));
 //    //Product ID has to have 13 digits
-//    chowder.processPayment("1717171717171", "10", phoneNumber);
-//    chowder.paymentCompleteDialog = new AlertDialog.Builder(MerchantPayment.this)
+//    chowder.processPayment("1717171717171", amount, phoneNumber);
+//    chowder.paymentCompleteDialog = new AlertDialog.Builder(YourActivity.this)
 //            .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
 //        public void onClick(DialogInterface dialog, int which) {
 //           //Do something because the user has completed payment
