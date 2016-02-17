@@ -18,18 +18,20 @@ The screenshots below show how it works.
 
 Add this to the build.gradle file of your module
 
-```repositories {
-    maven {
+     
+    repositories {
+      maven {
         url 'https://dl.bintray.com/ianwambai/maven/'
-    }
-}
+      }
+    } 
 
-dependencies {
-    compile 'com.toe.chowder:chowder:0.5.0'
-}
-```
+    dependencies {
+        compile 'com.toe.chowder:chowder:0.5.0'
+    }
 
 #Sample Code
+
+Get the test `merchant_id` and `passkey` from the sample project.
 
         Chowder chowder = new Chowder(MainActivity.this, MERCHANT_ID, PASSKEY, amount, phoneNumber.replaceAll("\\+", ""), productId);
         chowder.processPayment();
