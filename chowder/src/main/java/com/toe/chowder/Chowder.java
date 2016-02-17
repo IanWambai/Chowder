@@ -41,21 +41,6 @@ import javax.net.ssl.X509TrustManager;
  */
 public class Chowder {
 
-    //    Chowder chowder = new Chowder(MerchantPayment.this, getString(R.string.merchant_id), getString(R.string.passkey), "100", phoneNumber);
-    //    chowder.processPayment(Utils.generateRandomId());
-    //    chowder.paymentCompleteDialog = new AlertDialog.Builder(MerchantPayment.this)
-    //            .setTitle("Payment Complete")
-    //    .setMessage("Your product will now be uploaded to First Customa.\n\nThank you for your business.")
-    //    .setIcon(android.R.drawable.ic_dialog_alert)
-    //    .setCancelable(false)
-    //    .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-    //        public void onClick(DialogInterface dialog, int which) {
-    //            FirebaseUtils.saveNewPromotion(firebase, MerchantPayment.this, sp, title, description, price, endDate, image, username, paymentInformation, businessName);
-    //            dialog.dismiss();
-    //        }
-    //    });
-    //    chowder.checkTransactionStatus(getString(R.string.merchant_id), getString(R.string.passkey), sp.getString("lastTransactionId", null));
-
     //      The Merchant captures the payment details and prepares call to the SAG’s endpoint
     //      The Merchant invokes SAG’s processCheckOut interface
     //      The SAG validates the request sent and returns a response
@@ -108,15 +93,11 @@ public class Chowder {
         String referenceId = productId;
         timestamp = Utils.generateTimestamp();
         merchantTransactionId = Utils.generateRandomId();
-        password = Utils.generatePassword(merchantId + passkey + timestamp);
+        password = Utils.generatePassword(merchantId + passkey + timestamp).replaceAll("\\s+", "");
 
 //      The Merchant captures the payment details and prepares call to the SAG’s endpoint.
 //      The Merchant invokes SAG’s processCheckOut interface.
-        try {
-            Log.d("M-PESA REQUEST", URLEncoder.encode(new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod).toString(), "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        Log.d("M-PESA REQUEST", new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod).toString());
 
         trustEveryone();
         SOAP11Request<ProcessCheckoutResponse> processCheckoutRequest = requestFactory.buildRequest(url, new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod), soapAction, ProcessCheckoutResponse.class);
@@ -241,7 +222,7 @@ public class Chowder {
                     progress.dismiss();
                     paymentCompleteDialog
                             .setTitle("Transaction in Progress")
-                            .setMessage("Please enter your Bonga PIN in the Safaricom dialog that will pop up. After you have made your payment, confirm it here.")
+                            .setMessage("Please enter your Bonga PIN in the Safaricom dialog that will pop up. After you have made your payment, PLEASE WAIT FOR A TEXT MESSAGE, then confirm it here.")
                             .setIcon(android.R.drawable.ic_dialog_alert)
                             .show();
 //                    new AlertDialog.Builder(activity)

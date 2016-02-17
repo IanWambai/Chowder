@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.toe.chowder.Chowder;
-import com.toe.chowder.R;
+import com.toe.chowder.sample.R;
 
 import java.util.ArrayList;
 
@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        //Check user's SMS inbox for confirmation text
+                        //You can also use a callback URL to confirm the transaction, but I'll add that soon
                         getConfirmationText(productId);
                     }
                 });

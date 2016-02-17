@@ -1,13 +1,14 @@
 package com.toe.chowder.utils;
 
 import android.util.Base64;
-import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -39,7 +40,7 @@ public class Utils {
         try {
             digest = MessageDigest.getInstance("SHA-256");
             digest.update(stringToHash.getBytes());
-            hash = bytesToHexString(digest.digest());
+            hash = Utils.bytesToHexString(digest.digest());
         } catch (NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -57,5 +58,19 @@ public class Utils {
 
     public static String generateRandomId() {
         return UUID.randomUUID().toString();
+    }
+
+    public static String generateProductId() {
+        //Length of the ID has to be 13
+        char[] characterSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+        int length = 13;
+        Random random = new SecureRandom();
+        char[] result = new char[length];
+        for (int i = 0; i < result.length; i++) {
+            // picks a random index out of character set > random character
+            int randomCharIndex = random.nextInt(characterSet.length);
+            result[i] = characterSet[randomCharIndex];
+        }
+        return new String(result);
     }
 }
