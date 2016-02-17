@@ -1,6 +1,6 @@
 #Chowder M-Pesa Checkout Android Libarary
 
-This libarary, using the M-Pesa C2B APIs will allow you to prompt a user to make a payment from their M-Pesa accounts to a PayBill number without having to leave your app. 
+This library, using the M-Pesa C2B APIs will allow you to prompt a user to make a payment from their M-Pesa accounts to a PayBill number without having to leave your app. 
 
 For successful requests, Safaricom will send push USSD to the user's mobile device and prompt them to enter their Bonga PIN.
 
