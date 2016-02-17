@@ -23,6 +23,8 @@ import com.toe.chowder.responses.TransactionConfirmResponse;
 import com.toe.chowder.responses.TransactionStatusQueryResponse;
 import com.toe.chowder.utils.Utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -39,16 +41,20 @@ import javax.net.ssl.X509TrustManager;
  */
 public class Chowder {
 
-//    Chowder chowder = new Chowder(YourActivity.this, getString(R.string.merchant_id), getString(R.string.passkey));
-//    //Product ID has to have 13 digits
-//    chowder.processPayment("1717171717171", amount, phoneNumber);
-//    chowder.paymentCompleteDialog = new AlertDialog.Builder(YourActivity.this)
-//            .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-//        public void onClick(DialogInterface dialog, int which) {
-//           //Do something because the user has completed payment
-//            dialog.dismiss();
-//        }
-//    });
+    //    Chowder chowder = new Chowder(MerchantPayment.this, getString(R.string.merchant_id), getString(R.string.passkey), "100", phoneNumber);
+    //    chowder.processPayment(Utils.generateRandomId());
+    //    chowder.paymentCompleteDialog = new AlertDialog.Builder(MerchantPayment.this)
+    //            .setTitle("Payment Complete")
+    //    .setMessage("Your product will now be uploaded to First Customa.\n\nThank you for your business.")
+    //    .setIcon(android.R.drawable.ic_dialog_alert)
+    //    .setCancelable(false)
+    //    .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+    //        public void onClick(DialogInterface dialog, int which) {
+    //            FirebaseUtils.saveNewPromotion(firebase, MerchantPayment.this, sp, title, description, price, endDate, image, username, paymentInformation, businessName);
+    //            dialog.dismiss();
+    //        }
+    //    });
+    //    chowder.checkTransactionStatus(getString(R.string.merchant_id), getString(R.string.passkey), sp.getString("lastTransactionId", null));
 
     //      The Merchant captures the payment details and prepares call to the SAG’s endpoint
     //      The Merchant invokes SAG’s processCheckOut interface
@@ -70,7 +76,10 @@ public class Chowder {
     private String encParams = "";
     private String callBackUrl = "http://172.21.20.215:8080/test";
     private String callBackMethod = "POST";
+    private String amount;
+    private String phoneNumber;
 
+    //
     private String merchantId;
     private String passkey;
 
@@ -81,21 +90,18 @@ public class Chowder {
     public AlertDialog.Builder paymentCompleteDialog;
     private String timestamp;
     private String password;
+    private String productId;
 
-    public Chowder(Activity activity, String merchantId, String passkey) {
+    public Chowder(Activity activity, String merchantId, String passkey, String amount, String phoneNumber, String productId) {
         this.activity = activity;
         this.merchantId = merchantId;
         this.passkey = passkey;
+        this.amount = amount;
+        this.phoneNumber = phoneNumber;
+        this.productId = productId;
     }
 
-    public Chowder(Activity activity, String merchantId, String passkey, String callbackUrl) {
-        this.activity = activity;
-        this.merchantId = merchantId;
-        this.passkey = passkey;
-        this.callBackUrl = callbackUrl;
-    }
-
-    public void processPayment(String productId, String amount, String phoneNumber) {
+    public void processPayment() {
         progress = ProgressDialog.show(activity, "Please wait",
                 "Connecting to Safaricom...", true);
 
@@ -106,7 +112,11 @@ public class Chowder {
 
 //      The Merchant captures the payment details and prepares call to the SAG’s endpoint.
 //      The Merchant invokes SAG’s processCheckOut interface.
-        Log.d("M-PESA REQUEST", new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod).toString());
+        try {
+            Log.d("M-PESA REQUEST", URLEncoder.encode(new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod).toString(), "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         trustEveryone();
         SOAP11Request<ProcessCheckoutResponse> processCheckoutRequest = requestFactory.buildRequest(url, new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod), soapAction, ProcessCheckoutResponse.class);
@@ -170,13 +180,10 @@ public class Chowder {
                     progress.dismiss();
                     Log.d("M-PESA REQUEST", "Process checkout failed: " + returnCode);
                     Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
-                    showErrorMessage(activity, "Checkout process failed. Return code: " + returnCode);
                 }
             } else {
-                progress.dismiss();
                 Log.d("M-PESA REQUEST", "Result is null");
                 Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
-                showErrorMessage(activity, "Checkout process failed. Please check your internet connection and try again.");
             }
         }
 
@@ -185,7 +192,6 @@ public class Chowder {
             progress.dismiss();
             Log.e("M-PESA REQUEST", "Error: " + e.toString());
             Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
-            showErrorMessage(activity, "Checkout process failed. Error: " + e.toString());
         }
     };
 
@@ -233,29 +239,33 @@ public class Chowder {
 
                 if (returnCode.equals(SUCCESS_CODE)) {
                     progress.dismiss();
-                    new AlertDialog.Builder(activity)
+                    paymentCompleteDialog
                             .setTitle("Transaction in Progress")
                             .setMessage("Please enter your Bonga PIN in the Safaricom dialog that will pop up. After you have made your payment, confirm it here.")
                             .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setCancelable(false)
-                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    checkTransactionStatus(merchantId, transactionId);
-                                    dialog.dismiss();
-                                }
-                            })
                             .show();
+//                    new AlertDialog.Builder(activity)
+//                            .setTitle("Transaction in Progress")
+//                            .setMessage("Please enter your Bonga PIN in the Safaricom dialog that will pop up. After you have made your payment, confirm it here.")
+//                            .setIcon(android.R.drawable.ic_dialog_alert)
+//                            .setCancelable(false)
+//                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    //check for text
+//
+//                                    dialog.dismiss();
+//                                }
+//                            })
+//                            .show();
                 } else {
                     progress.dismiss();
                     Log.d("M-PESA REQUEST", "Transaction confirm failed: " + returnCode);
                     Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
-                    showErrorMessage(activity, "Transaction confirmation failed. Return code: " + returnCode);
                 }
             } else {
                 progress.dismiss();
                 Log.d("M-PESA REQUEST", "Result is null");
                 Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
-                showErrorMessage(activity, "Transaction confirmation failed. Please check your internet connection and try again.");
             }
         }
 
@@ -264,7 +274,6 @@ public class Chowder {
             progress.dismiss();
             Log.e("M-PESA REQUEST", "Error: " + e.toString());
             Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
-            showErrorMessage(activity, "Transaction confirmation failed. Error: " + e.toString());
         }
     };
 
@@ -307,13 +316,11 @@ public class Chowder {
                     progress.dismiss();
                     Log.d("M-PESA REQUEST", "Transaction confirm failed: " + returnCode);
                     Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
-                    showErrorMessage(activity, "Transaction status query failed. Return code: " + returnCode);
                 }
             } else {
                 progress.dismiss();
                 Log.d("M-PESA REQUEST", "Result is null");
                 Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
-                showErrorMessage(activity, "Transaction status query failed. Please check your internet connection and try again.");
             }
         }
 
@@ -322,20 +329,6 @@ public class Chowder {
             progress.dismiss();
             Log.e("M-PESA REQUEST", "Error: " + e.toString());
             Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
-            showErrorMessage(activity, "Transaction status query failed. Error: " + e.toString());
         }
     };
-
-    private void showErrorMessage(final Context context, String customMessage) {
-        new AlertDialog.Builder(context)
-                .setTitle("Payment Ready")
-                .setMessage(customMessage)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setCancelable(false)
-                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
-    }
 }

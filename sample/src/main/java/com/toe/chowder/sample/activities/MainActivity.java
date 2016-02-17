@@ -1,9 +1,13 @@
 package com.toe.chowder.sample.activities;
 
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,6 +15,8 @@ import android.widget.Toast;
 
 import com.toe.chowder.Chowder;
 import com.toe.chowder.R;
+
+import java.util.ArrayList;
 
 /**
  * Created by Wednesday on 1/20/2016.
@@ -23,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
     EditText etAmount, etPhoneNumber;
     Button bPay;
+
+    Chowder chowder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,19 +67,69 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void makePayment(String productId, String amount, String phoneNumber) {
-        Chowder chowder = new Chowder(MainActivity.this, MERCHANT_ID, PASSKEY);
-        chowder.processPayment(productId, amount, phoneNumber);
+    private void makePayment(final String productId, String amount, String phoneNumber) {
+        chowder = new Chowder(MainActivity.this, MERCHANT_ID, PASSKEY, amount, phoneNumber.replaceAll("\\+", ""), productId);
+        chowder.processPayment();
         chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
-                .setPositiveButton("Finish", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        //Do something because the user has completed payment
-                        Toast.makeText(getApplicationContext(), "User has successfully paid. You may now provide them with your product or service", Toast.LENGTH_LONG).show();
-                        dialog.dismiss();
+                        getConfirmationText(productId);
                     }
                 });
 
         //      That's it! You can now process payments using the M-Pesa API
         //      IMPORTANT: Any cash you send to the test PayBill number is no-refundable, so use small amounts to test
+    }
+
+    private void getConfirmationText(String productId) {
+        ArrayList<String> messages = new ArrayList<>();
+        final String SMS_URI_INBOX = "content://sms/inbox";
+        try {
+            Uri uri = Uri.parse(SMS_URI_INBOX);
+            String[] projection = new String[]{"_id", "address", "person", "body", "date", "type"};
+            Cursor cur = getContentResolver().query(uri, projection, "address='SAFARICOM'", null, "date desc");
+            if (cur.moveToFirst()) {
+                int index_Address = cur.getColumnIndex("address");
+                int index_Person = cur.getColumnIndex("person");
+                int index_Body = cur.getColumnIndex("body");
+                int index_Date = cur.getColumnIndex("date");
+                int index_Type = cur.getColumnIndex("type");
+                do {
+                    String strAddress = cur.getString(index_Address);
+                    int intPerson = cur.getInt(index_Person);
+                    String strbody = cur.getString(index_Body);
+                    long longDate = cur.getLong(index_Date);
+                    int int_Type = cur.getInt(index_Type);
+
+                    messages.add(strbody);
+                } while (cur.moveToNext());
+
+                if (!cur.isClosed()) {
+                    cur.close();
+                }
+            }
+        } catch (SQLiteException ex) {
+            Log.d("SQLiteException", ex.getMessage());
+        }
+
+        boolean hasReceivedText = false;
+        if (messages.size() > 0) {
+            for (int i = 0; i < messages.size(); i++) {
+                if (messages.get(i).contains(productId)) {
+                    hasReceivedText = true;
+                }
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), "Confirmation text not found", Toast.LENGTH_LONG).show();
+            chowder.paymentCompleteDialog.show();
+        }
+
+        if (hasReceivedText) {
+            Toast.makeText(getApplicationContext(), "Transaction confirmed", Toast.LENGTH_LONG).show();
+            //The user has paid. Do your thing.
+        } else {
+            Toast.makeText(getApplicationContext(), "Confirmation text not found", Toast.LENGTH_LONG).show();
+            chowder.paymentCompleteDialog.show();
+        }
     }
 }
