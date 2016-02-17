@@ -18,7 +18,7 @@ The screenshots below show how it works.
 
 Add this to the build.gradle file of your module
 
-repositories {
+```repositories {
     maven {
         url 'https://dl.bintray.com/ianwambai/maven/'
     }
@@ -27,6 +27,7 @@ repositories {
 dependencies {
     compile 'com.toe.chowder:chowder:0.5.0'
 }
+```
 
 #Sample Code
 
@@ -37,7 +38,6 @@ dependencies {
                     public void onClick(DialogInterface dialog, int which) {
                         //Check user's SMS inbox for confirmation text
                         //You can also use a callback URL to confirm the transaction, but I'll add that soon
-                        getConfirmationText(productId);
                     }
                 });
 
