@@ -16,28 +16,28 @@ The screenshots below show how it works.
 ![](images/ussd_accept.png?raw=true)
 ![](images/transaction_done.png?raw=true)
 
-#Use Cases
+##Use Cases
 You can easily use Chowder in your Android app for the following cases:
 * Having a user pay before accessing your app, or certain features in your app
 * Having a list of items, such as products, tickets, meals, books, music ,images or other media, and having the user reliably pay to access them
 * In app purchases in games
 * Having a user pay to access the premium/ad-free version of your app
 * Subscribing a user and having them pay again after a set period of time
-* Any form of payment you need a user to do for you to provide them goods/services via Android
+* Any form of payment you need a user to make for you to provide them goods/services via Android
 
-#Usage
+##Usage
 
-Add this to the build.gradle file of your module
+Add this to the `build.gradle` file of your module
 
     dependencies {
         compile 'com.toe.chowder:chowder:0.5.0'
     }
 
-#Sample Code
+##Sample Code
 
 Get the test `merchant_id` and `passkey` from the sample project.
 
-        Chowder chowder = new Chowder(MainActivity.this, MERCHANT_ID, PASSKEY, amount, phoneNumber.replaceAll("\\+", ""), productId);
+        Chowder chowder = new Chowder(YourActivity.this, MERCHANT_ID, PASSKEY, amount, phoneNumber, productId);
         chowder.processPayment();
         chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
@@ -47,4 +47,4 @@ Get the test `merchant_id` and `passkey` from the sample project.
                     }
                 });
 
-And you are done!
+And you are done! Get more code in the sample project.

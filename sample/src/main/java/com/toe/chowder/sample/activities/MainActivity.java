@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getConfirmationText(String productId) {
+        //Get all the text messages from SAFARICOM
         ArrayList<String> messages = new ArrayList<>();
         final String SMS_URI_INBOX = "content://sms/inbox";
         try {
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("SQLiteException", ex.getMessage());
         }
 
+        //Search for a text message from SAFARCOM containing the product Id
         boolean hasReceivedText = false;
         if (messages.size() > 0) {
             for (int i = 0; i < messages.size(); i++) {
