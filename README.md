@@ -4,7 +4,7 @@ This library, using the M-Pesa C2B APIs will allow you to prompt a user to make 
 
 For successful requests, Safaricom will send push USSD to the user's mobile device and prompt them to enter their Bonga PIN.
 
-Get the sample apk from [here](https://github.com/IanWambai/Chowder/tree/master/sample/chowder_sample.apk):
+Get the sample apk from [here](https://github.com/IanWambai/Chowder/tree/master/sample/chowder_sample.apk), click on 'View the full file' to download it, or find it in the 'sample' folder:
 
 The screenshots below show how it works.
 
@@ -18,11 +18,12 @@ The screenshots below show how it works.
 
 #Use Cases
 You can easily use Chowder in your Android app for the following cases:
--Having a user pay before accessing your app, or certain features in your app
--Having a list of items, such as products, tickets, meals, books, music ,images or other media, and having the user reliably pay to access them
--In app purchases in games
--Having a user pay to access the premium/ad-free version of your app
--Subscribing a user and having them pay again after a set period of time
+* Having a user pay before accessing your app, or certain features in your app
+* Having a list of items, such as products, tickets, meals, books, music ,images or other media, and having the user reliably pay to access them
+* In app purchases in games
+* Having a user pay to access the premium/ad-free version of your app
+* Subscribing a user and having them pay again after a set period of time
+* Any form of payment you need a user to do for you to provide them goods/services via Android
 
 #Usage
 
