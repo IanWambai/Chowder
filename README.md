@@ -36,7 +36,7 @@ Add this to the `build.gradle` file of your module
 
 ##Parameters
 
-You're going to need some parameters beforehand in order to successfully receive a payments:
+You're going to need some parameters beforehand in order to successfully receive payments:
 
 + **Merchant Id**: This is the PayBill number to which the user will be making payments. You get this from Safaricom.
 + **Passkey**: This is a string that you also get from Safarcom after they enable your PayBill account for online checouts.
