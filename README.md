@@ -44,7 +44,7 @@ You're going to need some parameters beforehand in order to successfully receive
 + **Phone number**: This is the Safaricom phone number of the person who is supposed to make the payment. They will have to confirm the payment using their Bonga PIN.
 + **Product Id**: This is the unique id of the product, feature or service that you are selling.
 
-You must provide all of these parameters or else you will recieve an error.
+You must provide all of these parameters or else you will receive an error.
 
 ##Sample Code
 
