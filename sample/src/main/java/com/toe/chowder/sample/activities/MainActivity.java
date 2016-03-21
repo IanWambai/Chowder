@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 });
 
         //      That's it! You can now process payments using the M-Pesa API
-        //      IMPORTANT: Any cash you send to the test PayBill number is no-refundable, so use small amounts to test
+        //      IMPORTANT: Any cash you send to the test PayBill number is non-refundable, so use small amounts to test
     }
 
     private void getConfirmationText(String productId) {

@@ -17,6 +17,7 @@ The screenshots below show how it works.
 ![](images/transaction_done.png?raw=true)
 
 ##Use Cases
+
 You can easily use Chowder in your Android app for the following cases:
 * Having a user pay before accessing your app, or certain features in your app
 * Having a list of items, such as products, tickets, meals, books, music ,images or other media, and having the user reliably pay to access them
@@ -32,6 +33,18 @@ Add this to the `build.gradle` file of your module
     dependencies {
         compile 'com.toe.chowder:chowder:0.5.0'
     }
+
+##Parameters
+
+You're going to need some parameters beforehand in order to successfully receive a payments:
+
+**Merchant Id**: This is the PayBill number to which the user will be making payments. You get this from Safaricom.
+**Passkey**: This is a string that you also get from Safarcom after they enable your PayBill account for online checouts.
+**Amount**: This is the amount that you would like to charge the user, or the cost of your product, feature or service.
+**Phone number**: This is the Safaricom phone number of the person who is supposed to make the payment. They will have to confirm the payment using their Bonga PIN.
+**Product Id**: This is the unique id of the product, feature or service that you are selling.
+
+You must provide all of these parameters or else you will recieve an error.
 
 ##Sample Code
 

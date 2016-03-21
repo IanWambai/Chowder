@@ -64,7 +64,7 @@ public class Chowder {
     private String amount;
     private String phoneNumber;
 
-    //
+    //Payment parameters
     private String merchantId;
     private String passkey;
 
