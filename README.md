@@ -20,8 +20,8 @@ The screenshots below show how it works.
 
 You can easily use Chowder in your Android app for the following cases:
 * Having a user pay before accessing your app, or certain features in your app.
-* Having a list of items, such as products, tickets, meals, books, music ,images or other media, and having the user reliably pay to access them.
-* In-app purchases in games e.t.c.
+* Having a list of items, such as products, tickets, meals, books, music, images or other media, and having the user reliably pay to access them.
+* In-app purchases in games.
 * Having a user pay to access the premium/ad-free version of your app.
 * Subscribing a user and having them pay again after a set period of time.
 * Any form of payment you need a user to make for you to provide them goods/services via Android.
@@ -38,7 +38,7 @@ Add this to the `build.gradle` file of your module
 
 You're going to need some parameters beforehand in order to successfully receive payments:
 
-+ **Merchant Id**: This is the PayBill number to which the user will be making payments. You get this from Safaricom.
++ **Pay Bill number**: This is the PayBill number to which the user will be making payments. You get this from Safaricom.
 + **Passkey**: This is a string that you also get from Safarcom after they enable your PayBill account for online checkouts.
 + **Amount**: This is the amount that you would like to charge the user, or the cost of your product, feature or service.
 + **Phone number**: This is the Safaricom phone number of the person who is supposed to make the payment. They will have to confirm the payment using their Bonga PIN.
@@ -50,7 +50,7 @@ You must provide all of these parameters or else you will receive an error.
 
 Get the test `merchant_id` and `passkey` from the sample project.
 
-        Chowder chowder = new Chowder(YourActivity.this, MERCHANT_ID, PASSKEY, amount, phoneNumber, productId);
+        Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY, amount, phoneNumber, productId);
         chowder.processPayment();
         chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {

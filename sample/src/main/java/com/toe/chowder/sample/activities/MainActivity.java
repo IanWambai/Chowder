@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     //Test parameters you can replace these with your own PayBill details
-    String MERCHANT_ID = "898998";
+    String PAYBILL_NUMBER = "898998";
     String PASSKEY = "ada798a925b5ec20cc331c1b0048c88186735405ab8d59f968ed4dab89da5515";
 
     EditText etAmount, etPhoneNumber;
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void makePayment(final String productId, String amount, String phoneNumber) {
-        chowder = new Chowder(MainActivity.this, MERCHANT_ID, PASSKEY, amount, phoneNumber.replaceAll("\\+", ""), productId);
+        chowder = new Chowder(MainActivity.this, PAYBILL_NUMBER, PASSKEY, amount, phoneNumber.replaceAll("\\+", ""), productId);
         chowder.processPayment();
         chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
