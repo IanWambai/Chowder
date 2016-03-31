@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
@@ -278,7 +277,7 @@ public class Chowder {
                 } else {
                     progress.dismiss();
                     Log.d("M-PESA REQUEST", "Transaction confirm failed: " + returnCode);
-                    Toast.makeText(activity, "Something went wrong. Checking transaction status failed: " + returnCode, Toast.LENGTH_SHORT).show();
+                    paymentFailure(merchantId, msisdn, amount, transactionStatus, processDescription);
                 }
             } else {
                 progress.dismiss();

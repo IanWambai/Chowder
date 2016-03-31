@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.toe.chowder.Chowder;
 import com.toe.chowder.interfaces.PaymentListener;
@@ -89,7 +90,11 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
 
         //Call chowder.checkTransactionStatus to check the transaction
         //Check last transaction
-        chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);
+        if (transactionId != null) {
+            chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);
+        } else {
+            Toast.makeText(getApplicationContext(), "No previous transaction available", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -118,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
         //The payment was successful.
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Payment confirmed")
-                .setMessage(transactionStatus + ". Your amount of Ksh." + amount + " has been successfully paid from " + msisdn + " to merchant Id " + merchantId + " with the M-Pesa transaction code " + mpesaTransactionId + " on " + mpesaTransactionDate + ".\n\nThank you for your business.")
+                .setMessage(transactionStatus + ". Your amount of Ksh." + amount + " has been successfully paid from " + msisdn + " to PayBill number " + merchantId + " with the M-Pesa transaction code " + mpesaTransactionId + " on " + mpesaTransactionDate + ".\n\nThank you for your business.")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
@@ -135,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
         //The payment failed.
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Payment failed")
-                .setMessage(transactionStatus + ". Your amount of Ksh." + amount + " was not paid from " + msisdn + " to merchant Id " + merchantId + ". Please try again.")
+                .setMessage(transactionStatus + ". Your amount of Ksh." + amount + " was not paid from " + msisdn + " to PayBill number " + merchantId + ". Please try again.")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setPositiveButton("Pay", new DialogInterface.OnClickListener() {
