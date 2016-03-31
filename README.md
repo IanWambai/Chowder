@@ -55,27 +55,40 @@ This is how you initialize the Chowder object and process a payment.
 Get the test `PAYBILL_NUMBER ` and `PASSKEY` from the sample project.
     
         //You can create a single global variable for Chowder like this
-        Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY);
+        Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY, this);
 
         //You can then use processPayment() to process individual payments
         chowder.processPayment(amount, phoneNumber, productId);
 
-        //Each payment comes with it's own dialog which acts like a listener
-        chowder.paymentCompleteDialog = new AlertDialog.Builder(YourActivity.this)
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                         //Get the relevant transaction id you want to check
-                         chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);
-                    }
-                });
+Guess what? You're done! All you have to do is wait for the user to make the payment.
 
 ####Confirm payment:
 
 This is how you confirm whether a user has paid or not, so you can then take the necessary action.
 
-    Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY);
     chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);
-    //You can get the transaction Ids of the transactions made from SharedPreferences. Check the sample project.
+    //Use the transaction id provided by the PaymentListener
+
+####Interface
+
+You use `PaymentListener` to know the results of the payment processes. There are three methods:
+
+    @Override
+    public void onPaymentReady(String returnCode, String processDescription, String merchantTransactionId, String transactionId) {
+        //The user is now waiting to enter their PIN on the Safaricom push USSD
+        //Show the user something cause it might be awkward just sitting there
+        //You can use the transaction id provided to confirm payment to make sure you store the ids somewhere if you want the user to be able to check later
+    }
+
+    @Override
+    public void onPaymentSuccess(String merchantId, String msisdn, String amount, String mpesaTransactionDate, String mpesaTransactionId, String transactionStatus, String returnCode, String processDescription, String merchantTransactionId, String encParams, String transactionId) {
+        //The payment was successful, and real money has moved from the user to the PayBill account
+    }
+
+    @Override
+    public void onPaymentFailure(String merchantId, String msisdn, String amount, String transactionStatus, String processDescription) {
+        //The payment failed. The user most probably cancelled the transaction. They can always try again.
+    }
 
 ##Debugging
 
