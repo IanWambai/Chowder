@@ -1,10 +1,12 @@
 #Chowder M-Pesa Checkout Android Libarary
 
-This library, using the M-Pesa C2B APIs will allow you to prompt a user to make a payment from their M-Pesa accounts to a PayBill number without having to leave your app. 
+This library, using the M-Pesa C2B APIs will allow you to prompt a user to make a payment from their M-Pesa account to a PayBill number without having to leave your app. 
 
 For successful requests, Safaricom will send a push USSD to the user's mobile device and prompt them to enter their Bonga PIN. Funds will then be transferred from the user's M-Pesa account into your PayBill account after which you can provide the user the goods or services that they have purchased.
 
 Get the sample apk from [here](https://github.com/IanWambai/Chowder/tree/master/sample/chowder_sample.apk), click on 'View the full file' to download it, or find it in the 'sample' folder:
+
+##Screenshots
 
 The screenshots below show how it works.
 
