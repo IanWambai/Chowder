@@ -33,7 +33,7 @@ You can easily use Chowder in your Android app for the following cases:
 Add this to the `build.gradle` file of your module
 
     dependencies {
-        compile 'com.toe.chowder:chowder:0.5.0'
+        compile 'com.toe.chowder:chowder:0.6.5'
     }
 
 ##Parameters
