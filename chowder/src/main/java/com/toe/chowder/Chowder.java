@@ -159,7 +159,7 @@ public class Chowder {
                 }
             } else {
                 Log.d("M-PESA REQUEST", "Result is null");
-                Toast.makeText(activity, "Something went wrong. Nothing received from Safaricom.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Something went wrong. No response from Safaricom. Please try again.", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -167,7 +167,7 @@ public class Chowder {
         public void onException(Request<ProcessCheckoutResponse, SOAP11Fault> request, SOAPException e) {
             progress.dismiss();
             Log.e("M-PESA REQUEST", "Error: " + e.toString());
-            Toast.makeText(activity, "Something went wrong. Error: "+e.toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Something went wrong. Error: " + e.toString(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -242,7 +242,7 @@ public class Chowder {
             } else {
                 progress.dismiss();
                 Log.d("M-PESA REQUEST", "Result is null");
-                Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Something went wrong. No response from Safaricom. Please try again.", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -250,7 +250,7 @@ public class Chowder {
         public void onException(Request<TransactionConfirmResponse, SOAP11Fault> request, SOAPException e) {
             progress.dismiss();
             Log.e("M-PESA REQUEST", "Error: " + e.toString());
-            Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Something went wrong. Error: " + e.toString(), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -307,12 +307,12 @@ public class Chowder {
                 } else {
                     progress.dismiss();
                     Log.d("M-PESA REQUEST", "Transaction confirm failed: " + returnCode);
-                    Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "Something went wrong. Checking transaction status failed: " + returnCode, Toast.LENGTH_SHORT).show();
                 }
             } else {
                 progress.dismiss();
                 Log.d("M-PESA REQUEST", "Result is null");
-                Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Something went wrong. No response from Safaricom. Please try again.", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -320,7 +320,7 @@ public class Chowder {
         public void onException(Request<TransactionStatusQueryResponse, SOAP11Fault> request, SOAPException e) {
             progress.dismiss();
             Log.e("M-PESA REQUEST", "Error: " + e.toString());
-            Toast.makeText(activity, "Something went wrong", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Something went wrong. Error: " + e.toString(), Toast.LENGTH_SHORT).show();
         }
     };
 }
