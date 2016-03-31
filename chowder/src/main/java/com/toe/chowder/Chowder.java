@@ -19,6 +19,7 @@ import com.alexgilleran.icesoap.soapfault.SOAP11Fault;
 import com.toe.chowder.envelopes.ProcessCheckoutEnvelope;
 import com.toe.chowder.envelopes.TransactionConfirmEnvelope;
 import com.toe.chowder.envelopes.TransactionStatusQueryEnvelope;
+import com.toe.chowder.interfaces.PaymentListener;
 import com.toe.chowder.responses.ProcessCheckoutResponse;
 import com.toe.chowder.responses.TransactionConfirmResponse;
 import com.toe.chowder.responses.TransactionStatusQueryResponse;
@@ -27,8 +28,6 @@ import com.toe.chowder.utils.Utils;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -71,11 +70,14 @@ public class Chowder {
     private ProgressDialog progress;
     private String merchantTransactionId;
 
-    public AlertDialog.Builder paymentCompleteDialog;
     private String timestamp;
     private String password;
 
-    public Chowder(Activity activity, String merchantId, String passkey) {
+    //Listeners
+    PaymentListener paymentCompleteListener;
+
+    public Chowder(Activity activity, String merchantId, String passkey, PaymentListener paymentCompleteListener) {
+        this.paymentCompleteListener = paymentCompleteListener;
         this.activity = activity;
         this.merchantId = merchantId;
         this.passkey = passkey;
@@ -192,8 +194,7 @@ public class Chowder {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
-                })
-                .show();
+                }).show();
     }
 
     private SOAP11Observer<TransactionConfirmResponse> transactionConfirmObserver = new SOAP11Observer<TransactionConfirmResponse>() {
@@ -208,32 +209,13 @@ public class Chowder {
                 String returnCode = request.getResult().getReturnCode();
                 String processDescription = request.getResult().getDescription();
                 String merchantTransactionId = request.getResult().getMerchantTransactionId();
-                final String transactionId = request.getResult().getTransactionId();
+                String transactionId = request.getResult().getTransactionId();
 
                 Log.d("M-PESA REQUEST", "Return code: " + returnCode);
-                Log.d("M-PESA REQUEST", "Transaction Id: " + transactionId);
 
                 if (returnCode.equals(SUCCESS_CODE)) {
                     progress.dismiss();
-                    paymentCompleteDialog
-                            .setTitle("Transaction in Progress")
-                            .setMessage("Please enter your Bonga PIN in the Safaricom dialog that will pop up. After you have made your payment, PLEASE WAIT FOR A TEXT MESSAGE, then confirm it here.")
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
-
-                    //Save the transaction ID
-                    SharedPreferences sp = activity.getSharedPreferences(activity.getPackageName(), activity.MODE_PRIVATE);
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-                        Set<String> transactionIds = sp.getStringSet("chowderTransactionIds", null);
-                        if (transactionIds != null) {
-                            transactionIds.add(transactionId);
-                        } else {
-                            transactionIds = new HashSet<>();
-                            transactionIds.add(transactionId);
-                        }
-
-                        sp.edit().putStringSet("chowderTransactionIds", transactionIds).apply();
-                    }
+                    paymentReady(returnCode, processDescription, merchantTransactionId, transactionId);
                 } else {
                     progress.dismiss();
                     Log.d("M-PESA REQUEST", "Transaction confirmation failed: " + returnCode);
@@ -288,27 +270,11 @@ public class Chowder {
 
                 if (returnCode.equals(SUCCESS_CODE)) {
                     progress.dismiss();
-
-                    String title = null;
-                    String message = null;
-                    if (mpesaTransactionId != null) {
-                        title = "Payment confirmed";
-                        message = "Your amount of Ksh." + amount + " has been successfully paid to merchant Id " + merchantId + " with the M-Pesa transaction code " + mpesaTransactionId + " on " + mpesaTransactionDate + ".\n\nThank you for your business. ";
+                    if (mpesaTransactionId == null || mpesaTransactionId.equals("N/A") || mpesaTransactionDate == null) {
+                        paymentFailure(merchantId, msisdn, amount, transactionStatus, processDescription);
                     } else {
-                        title = "Payment not confirmed";
-                        message = "Your payment could not be confirmed. If you have received a text message confirmation from Safaricom, please wait for a minute and try again.";
+                        paymentSuccess(merchantId, msisdn, amount, mpesaTransactionDate, mpesaTransactionId, transactionStatus, returnCode, processDescription, merchantTransactionId, encParams, transactionId);
                     }
-
-                    new AlertDialog.Builder(activity)
-                            .setTitle(title)
-                            .setMessage(message)
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setCancelable(false)
-                            .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            }).show();
                 } else {
                     progress.dismiss();
                     Log.d("M-PESA REQUEST", "Transaction confirm failed: " + returnCode);
@@ -328,4 +294,16 @@ public class Chowder {
             Toast.makeText(activity, "Something went wrong. Error: " + e.toString(), Toast.LENGTH_SHORT).show();
         }
     };
+
+    private void paymentReady(String returnCode, String processDescription, String merchantTransactionId, String transactionId) {
+        paymentCompleteListener.onPaymentReady(returnCode, processDescription, merchantTransactionId, transactionId);
+    }
+
+    private void paymentSuccess(String merchantId, String msisdn, String amount, String mpesaTransactionDate, String mpesaTransactionId, String transactionStatus, String returnCode, String processDescription, String merchantTransactionId, String encParams, String transactionId) {
+        paymentCompleteListener.onPaymentSuccess(merchantId, msisdn, amount, mpesaTransactionDate, mpesaTransactionId, transactionStatus, returnCode, processDescription, merchantTransactionId, encParams, transactionId);
+    }
+
+    private void paymentFailure(String merchantId, String msisdn, String amount, String transactionStatus, String processDescription) {
+        paymentCompleteListener.onPaymentFailure(merchantId, msisdn, amount, transactionStatus, processDescription);
+    }
 }

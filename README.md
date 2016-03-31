@@ -48,23 +48,30 @@ You must provide all of these parameters or else you will receive an error.
 
 ##Sample Code
 
-###Process payment:
+####Process payment:
+
+This is how you initialize the Chowder object and process a payment.
 
 Get the test `PAYBILL_NUMBER ` and `PASSKEY` from the sample project.
     
         //You can create a single global variable for Chowder like this
         Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY);
 
+        //You can then use processPayment() to process individual payments
         chowder.processPayment(amount, phoneNumber, productId);
+
+        //Each payment comes with it's own dialog which acts like a listener
         chowder.paymentCompleteDialog = new AlertDialog.Builder(YourActivity.this)
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        //Check user's SMS inbox for confirmation text
-                        //You can also use a callback URL to confirm the transaction, but I'll add that soon
+                         //Get the relevant transaction id you want to check
+                         chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);
                     }
                 });
 
-###Confirm payment:
+####Confirm payment:
+
+This is how you confirm whether a user has paid or not, so you can then take the necessary action.
 
     Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY);
     chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);
@@ -73,7 +80,7 @@ Get the test `PAYBILL_NUMBER ` and `PASSKEY` from the sample project.
 ##Debugging
 
 + You can use the tag "M-PESA REQUEST" to view requests and return codes.
-+ If you get errors, look up the response code (which will be toasted and also logged) in the Developers Guide under Reference Faults. Find it [here.](https://github.com/IanWambai/Chowder/tree/master/files/m-pesa_developers_guide.doc).
++ If you get errors, look up the response code (which will be toasted and also logged) in the Developers Guide under Reference Faults. Find it [here](https://github.com/IanWambai/Chowder/tree/master/files/m-pesa_developers_guide.doc).
 
 And you are done! Get more code in the sample project.
 

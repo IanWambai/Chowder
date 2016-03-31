@@ -1,5 +1,6 @@
 package com.toe.chowder.sample.activities;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -8,18 +9,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.toe.chowder.Chowder;
+import com.toe.chowder.interfaces.PaymentListener;
 import com.toe.chowder.sample.R;
-
-import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * Created by Wednesday on 1/20/2016.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PaymentListener {
 
     //Test parameters you can replace these with your own PayBill details
 //    String PAYBILL_NUMBER = "898998";
@@ -42,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUp() {
-        chowder = new Chowder(MainActivity.this, PAYBILL_NUMBER, PASSKEY);
+        chowder = new Chowder(MainActivity.this, PAYBILL_NUMBER, PASSKEY, this);
 
         etAmount = (EditText) findViewById(R.id.etAmount);
         etPhoneNumber = (EditText) findViewById(R.id.etPhoneNumber);
@@ -58,8 +56,12 @@ public class MainActivity extends AppCompatActivity {
                 //Your product's ID must have 13 digits
                 String productId = "1717171717171";
 
-                makePayment(productId, amount, phoneNumber);
+                chowder.processPayment(amount, phoneNumber.replaceAll("\\+", ""), productId);
+                //      That's it! You can now process payments using the M-Pesa API
+                //      IMPORTANT: Any cash you send to the test PayBill number is non-refundable, so use small amounts to test
 
+
+                //   ##What's happening:
                 //      The Merchant captures the payment details and prepares call to the SAG’s endpoint
                 //      The Merchant invokes SAG’s processCheckOut interface
                 //      The SAG validates the request sent and returns a response
@@ -74,54 +76,84 @@ public class MainActivity extends AppCompatActivity {
         bConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences sp = getSharedPreferences(getPackageName(), MODE_PRIVATE);
-                Set<String> transactionIdSet = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-                    //All the transaction Ids of the transactions are saved as a Set in Shared Preferences
-                    transactionIdSet = sp.getStringSet("chowderTransactionIds", null);
-                    if (transactionIdSet != null) {
-                        ArrayList<String> transactionIds = new ArrayList<>();
-                        transactionIds.addAll(transactionIdSet);
-
-                        //Call chowder.checkTransactionStatus to check the transaction
-                        chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionIds.get(transactionIds.size() - 1));
-                    } else {
-                        Toast.makeText(getApplicationContext(), "No transactions found", Toast.LENGTH_SHORT).show();
-                    }
-                }
+                confirmLastPayment();
             }
         });
     }
 
-    private void makePayment(final String productId, String amount, String phoneNumber) {
-        chowder.processPayment(amount, phoneNumber.replaceAll("\\+", ""), productId);
-        chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+    private void confirmLastPayment() {
+        SharedPreferences sp = getSharedPreferences(getPackageName(), MODE_PRIVATE);
+
+        //Chowder saves the last transaction id to SharedPreferences
+        String transactionId = sp.getString("chowderTransactionId", null);
+
+        //Call chowder.checkTransactionStatus to check the transaction
+        //Check last transaction
+        chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);
+    }
+
+    @Override
+    public void onPaymentReady(String returnCode, String processDescription, String merchantTransactionId, String transactionId) {
+        //The user is now waiting to enter their PIN
+        //You can use the transaction id to confirm payment to make sure you store the ids somewhere if you want the user to be able to check later
+        //Save the transaction ID
+        SharedPreferences sp = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+        sp.edit().putString("chowderTransactionId", transactionId).apply();
+
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Payment in progress")
+                .setMessage("Please wait for a pop up from Safaricom and enter your Bonga PIN")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(false)
+                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        //Confirm if the user has made the payment
-
-                        //You use a callback URL to confirm the transaction.
-                        // Currently Chowder hosts everything meaning you don't have to
-                        // provide a URL or set up any server stuff
-                        SharedPreferences sp = getSharedPreferences(getPackageName(), MODE_PRIVATE);
-                        Set<String> transactionIdSet = null;
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-                            //All the transaction Ids of the transactions are saved as a Set in Shared Preferences
-                            transactionIdSet = sp.getStringSet("chowderTransactionIds", null);
-                            if (transactionIdSet != null) {
-                                ArrayList<String> transactionIds = new ArrayList<>();
-                                transactionIds.addAll(transactionIdSet);
-
-                                //Call chowder.checkTransactionStatus
-                                chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionIds.get(transactionIds.size() - 1));
-                            } else {
-                                Toast.makeText(getApplicationContext(), "No transactions found", Toast.LENGTH_SHORT).show();
-                            }
-                        }
+                        //Well you can skip the dialog if you want, but it will make the user feel safer, they'll know what's going on instead of sitting there
+                        dialog.dismiss();
                     }
-                });
+                }).show();
+    }
 
-        //      That's it! You can now process payments using the M-Pesa API
-        //      IMPORTANT: Any cash you send to the test PayBill number is non-refundable, so use small amounts to test
+    @Override
+    public void onPaymentSuccess(String merchantId, String msisdn, String amount, String mpesaTransactionDate, String mpesaTransactionId, String transactionStatus, String returnCode, String processDescription, String merchantTransactionId, String encParams, String transactionId) {
+        //The payment was successful.
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Payment confirmed")
+                .setMessage(transactionStatus + ". Your amount of Ksh." + amount + " has been successfully paid from " + msisdn + " to merchant Id " + merchantId + " with the M-Pesa transaction code " + mpesaTransactionId + " on " + mpesaTransactionDate + ".\n\nThank you for your business.")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(false)
+                .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        //Well you can skip the dialog if you want, but it might make the user feel safer
+                        //The user has successfully paid so give them their goodies
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
+    @Override
+    public void onPaymentFailure(String merchantId, String msisdn, String amount, String transactionStatus, String processDescription) {
+        //The payment failed.
+        new AlertDialog.Builder(MainActivity.this)
+                .setTitle("Payment failed")
+                .setMessage(transactionStatus + ". Your amount of Ksh." + amount + " was not paid from " + msisdn + " to merchant Id " + merchantId + ". Please try again.")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(false)
+                .setPositiveButton("Pay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String amount = etAmount.getText().toString().trim();
+                        String phoneNumber = etPhoneNumber.getText().toString().trim();
+                        //Your product's ID must have 13 digits
+                        String productId = "1717171717171";
+
+                        chowder.processPayment(amount, phoneNumber.replaceAll("\\+", ""), productId);
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                //Well you can skip the dialog if you want, but it might make the user feel safer
+                //The user has successfully paid so give them their goodies
+                dialog.dismiss();
+            }
+        }).show();
     }
 }
