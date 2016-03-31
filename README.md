@@ -36,6 +36,8 @@ Add this to the `build.gradle` file of your module
         compile 'com.toe.chowder:chowder:0.6.5'
     }
 
+*The minSdkVersion is 9*
+
 ##Parameters
 
 You're going to need some parameters beforehand in order to successfully receive payments:
