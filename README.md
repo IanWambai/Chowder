@@ -64,7 +64,7 @@ Get the test `PAYBILL_NUMBER ` and `PASSKEY` from the sample project.
                     }
                 });
 
-###Confirm payment
+###Confirm payment:
 
     Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY);
     chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);
@@ -72,8 +72,8 @@ Get the test `PAYBILL_NUMBER ` and `PASSKEY` from the sample project.
 
 ##Debugging
 
-You can use the tag "M-PESA REQUEST" to view requests and return codes
-If you get errors, look up the response code, which will be toasted and logged, in the Developers Guide under Reference Faults. Find it [here.](https://github.com/IanWambai/Chowder/tree/master/files/m-pesa_developers_guide.doc).
++ You can use the tag "M-PESA REQUEST" to view requests and return codes.
++ If you get errors, look up the response code (which will be toasted and also logged) in the Developers Guide under Reference Faults. Find it [here.](https://github.com/IanWambai/Chowder/tree/master/files/m-pesa_developers_guide.doc).
 
 And you are done! Get more code in the sample project.
 

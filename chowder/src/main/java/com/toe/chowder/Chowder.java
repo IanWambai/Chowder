@@ -259,6 +259,7 @@ public class Chowder {
                 "Checking the transaction status...", true);
         Log.d("M-PESA REQUEST", new TransactionStatusQueryEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId).toString());
 
+        trustEveryone();
         SOAP11Request<TransactionStatusQueryResponse> transactionStatusQueryRequest = requestFactory.buildRequest(url, new TransactionStatusQueryEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId), soapAction, TransactionStatusQueryResponse.class);
         transactionStatusQueryRequest.execute(transactionStatusQueryObserver);
     }
@@ -291,7 +292,7 @@ public class Chowder {
                         message = "Your amount of Ksh." + amount + " has been successfully paid to merchant Id " + merchantId + " with the M-Pesa transaction code " + mpesaTransactionId + " on " + mpesaTransactionDate + ".\n\nThank you for your business. ";
                     } else {
                         title = "Payment not confirmed";
-                        message = "Your payment could not be confirmed. If you have received a text message confirmation from Safaricom, please wait for a minute and try again";
+                        message = "Your payment could not be confirmed. If you have received a text message confirmation from Safaricom, please wait for a minute and try again.";
                     }
 
                     new AlertDialog.Builder(activity)
