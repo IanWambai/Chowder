@@ -48,10 +48,12 @@ You must provide all of these parameters or else you will receive an error.
 
 ##Sample Code
 
-Get the test `merchant_id` and `passkey` from the sample project.
+###Process payment:
 
-        Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY, amount, phoneNumber, productId);
-        chowder.processPayment();
+Get the test `PAYBILL_NUMBER ` and `PASSKEY` from the sample project.
+
+        Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY);
+        chowder.processPayment(amount, phoneNumber, productId);
         chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -59,6 +61,17 @@ Get the test `merchant_id` and `passkey` from the sample project.
                         //You can also use a callback URL to confirm the transaction, but I'll add that soon
                     }
                 });
+
+###Confirm payment
+
+    Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY);
+    chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);
+    //You can get the transaction Ids of the transactions made from SharedPreferences. Check the sample project.
+
+##Debugging
+
+You can use the tag "M-PESA REQUEST" to view requests and return codes
+If you get errors, look up the response code, which will be toasted and logged, in the Developers Guide under Reference Faults. Find it [here.](https://github.com/IanWambai/Chowder/tree/master/files/m-pesa_developers_guide.doc).
 
 And you are done! Get more code in the sample project.
 
