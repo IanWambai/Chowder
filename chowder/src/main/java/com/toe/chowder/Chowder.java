@@ -257,6 +257,10 @@ public class Chowder {
     public void checkTransactionStatus(String merchantId, String transactionId) {
         progress = ProgressDialog.show(activity, "Please wait",
                 "Checking the transaction status...", true);
+
+        timestamp = Utils.generateTimestamp();
+        merchantTransactionId = Utils.generateRandomId();
+        password = Utils.generatePassword(merchantId + passkey + timestamp).replaceAll("\\s+", "");
         Log.d("M-PESA REQUEST", new TransactionStatusQueryEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId).toString());
 
         trustEveryone();
@@ -280,7 +284,7 @@ public class Chowder {
                 String encParams = request.getResult().getEncParams();
                 String transactionId = request.getResult().getTransactionId();
 
-                Log.d("M-PESA REQUEST", "Return code: " + returnCode);
+                Log.d("M-PESA REQUEST", "Mpesa transaction id: " + mpesaTransactionId);
 
                 if (returnCode.equals(SUCCESS_CODE)) {
                     progress.dismiss();

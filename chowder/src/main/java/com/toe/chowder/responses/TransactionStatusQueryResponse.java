@@ -6,16 +6,16 @@ import com.alexgilleran.icesoap.annotation.XMLObject;
 //<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="tns:ns">
 //        <SOAP-ENV:Body>
 //        <ns1:transactionStatusResponse>
-//        <MSISDN>254720471865</MSISDN>
-//        <AMOUNT>54000</AMOUNT>
-//        <M-PESA_TRX_DATE>2014-12-01 16:59:07</M-PESA_TRX_DATE>
-//        <M-PESA_TRX_ID>N/A</M-PESA_TRX_ID>
-//        <TRX_STATUS>Failed</TRX_STATUS>
-//        <RETURN_CODE>01</RETURN_CODE>
-//        <DESCRIPTION>InsufficientFunds</DESCRIPTION>
+//        <MSISDN>254700177140</MSISDN>
+//        <AMOUNT>10</AMOUNT>
+//        <MPESA_TRX_DATE>2016-03-31 06:58:24</MPESA_TRX_DATE>
+//        <MPESA_TRX_ID>KCV3E6591D</MPESA_TRX_ID>
+//        <TRX_STATUS>Success</TRX_STATUS>
+//        <RETURN_CODE>00</RETURN_CODE>
+//        <DESCRIPTION>The service request is processed successfully.</DESCRIPTION>
 //        <MERCHANT_TRANSACTION_ID/>
 //        <ENC_PARAMS/>
-//        <TRX_ID>ddd396509b168297141a747cd2dc1748</TRX_ID>
+//        <TRX_ID>ee35a7f5829bf4e31da2e0f09c442720</TRX_ID>
 //        </ns1:transactionStatusResponse>
 //        </SOAP-ENV:Body>
 //</SOAP-ENV:Envelope>
@@ -30,10 +30,10 @@ public class TransactionStatusQueryResponse {
     @XMLField("AMOUNT")
     private String amount;
 
-    @XMLField("M-PESA_TRX_DATE")
+    @XMLField("MPESA_TRX_DATE")
     private String mpesaTransactionDate;
 
-    @XMLField("M-PESA_TRX_ID")
+    @XMLField("MPESA_TRX_ID")
     private String mpesaTransactionId;
 
     @XMLField("TRX_STATUS")
