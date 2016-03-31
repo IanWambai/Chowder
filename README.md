@@ -51,10 +51,12 @@ You must provide all of these parameters or else you will receive an error.
 ###Process payment:
 
 Get the test `PAYBILL_NUMBER ` and `PASSKEY` from the sample project.
-
+    
+        //You can create a single global variable for Chowder like this
         Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY);
+
         chowder.processPayment(amount, phoneNumber, productId);
-        chowder.paymentCompleteDialog = new AlertDialog.Builder(MainActivity.this)
+        chowder.paymentCompleteDialog = new AlertDialog.Builder(YourActivity.this)
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         //Check user's SMS inbox for confirmation text
