@@ -21,11 +21,8 @@ import com.toe.chowder.sample.R;
 public class MainActivity extends AppCompatActivity implements PaymentListener {
 
     //Test parameters you can replace these with your own PayBill details
-//    String PAYBILL_NUMBER = "898998";
-//    String PASSKEY = "ada798a925b5ec20cc331c1b0048c88186735405ab8d59f968ed4dab89da5515";
-
-    String PAYBILL_NUMBER = "105775";
-    String PASSKEY = "1c2640251684e711688d791ac35fa1b8ee9e060943219cb3ff1d15017c8697de";
+    String PAYBILL_NUMBER = "898998";
+    String PASSKEY = "ada798a925b5ec20cc331c1b0048c88186735405ab8d59f968ed4dab89da5515";
 
     EditText etAmount, etPhoneNumber;
     Button bPay, bConfirm;
@@ -85,10 +82,10 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
     private void confirmLastPayment() {
         SharedPreferences sp = getSharedPreferences(getPackageName(), MODE_PRIVATE);
 
-        //Chowder saves the last transaction id to SharedPreferences
+        //We saved the last transaction id to Shared Preferences
         String transactionId = sp.getString("chowderTransactionId", null);
 
-        //Call chowder.checkTransactionStatus to check the transaction
+        //Call chowder.checkTransactionStatus to check a transaction
         //Check last transaction
         if (transactionId != null) {
             chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);

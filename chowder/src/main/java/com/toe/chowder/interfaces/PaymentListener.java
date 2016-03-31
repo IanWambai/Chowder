@@ -8,5 +8,5 @@ public interface PaymentListener {
 
     void onPaymentSuccess(String merchantId, String phoneNumber, String amount, String mpesaTransactionDate, String mpesaTransactionId, String transactionStatus, String returnCode, String processDescription, String merchantTransactionId, String encParams, String transactionId);
 
-    void onPaymentFailure(String merchantId, String msisdn, String amount, String transactionStatus, String processDescription);
+    void onPaymentFailure(String merchantId, String phoneNumber, String amount, String transactionStatus, String processDescription);
 }

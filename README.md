@@ -83,12 +83,12 @@ You use `PaymentListener` to know the results of the payment processes. There ar
     }
 
     @Override
-    public void onPaymentSuccess(String merchantId, String msisdn, String amount, String mpesaTransactionDate, String mpesaTransactionId, String transactionStatus, String returnCode, String processDescription, String merchantTransactionId, String encParams, String transactionId) {
+    public void onPaymentSuccess(String merchantId, String phoneNumber, String amount, String mpesaTransactionDate, String mpesaTransactionId, String transactionStatus, String returnCode, String processDescription, String merchantTransactionId, String encParams, String transactionId) {
         //The payment was successful, and real money has moved from the user to the PayBill account
     }
 
     @Override
-    public void onPaymentFailure(String merchantId, String msisdn, String amount, String transactionStatus, String processDescription) {
+    public void onPaymentFailure(String merchantId, String phoneNumber, String amount, String transactionStatus, String processDescription) {
         //The payment failed. The user most probably cancelled the transaction. They can always try again.
     }
 
