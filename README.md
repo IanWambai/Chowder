@@ -99,6 +99,11 @@ You use `PaymentListener` to know the results of the payment processes. There ar
 + You can use the tag "M-PESA REQUEST" to view requests and return codes.
 + If you get errors, look up the response code (which will be toasted and also logged) in the Developers Guide under Reference Faults. Find it [here](https://github.com/IanWambai/Chowder/tree/master/files/m-pesa_developers_guide.doc).
 
+##Other Platforms
+
+###PHP
+If you would like to use the M-Pesa API for a PHP project, find a PHP implementation [here](https://github.com/icrackthecode/MPESA-API).
+
 And you are done! Get more code in the sample project.
 
 If you have any feature suggestions or additions that you wish to make, please feel free. Please open issues if you come across anything weird.
