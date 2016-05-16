@@ -101,8 +101,11 @@ You use `PaymentListener` to know the results of the payment processes. There ar
 
 ##Other Platforms
 
-###PHP
+####PHP
 If you would like to use the M-Pesa API for a PHP project, find a PHP implementation [here](https://github.com/icrackthecode/MPESA-API).
+
+
+##Conclusion
 
 And you are done! Get more code in the sample project.
 
