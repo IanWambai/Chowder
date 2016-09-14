@@ -105,6 +105,31 @@ You use `PaymentListener` to know the results of the payment processes. There ar
 If you would like to use the M-Pesa API for a PHP project, find a PHP implementation [here](https://github.com/icrackthecode/MPESA-API).
 
 
+##Pull request changes
+For those of us who would like to minimise code lines even further,
+you now can:
+
+        //You can create a single global variable for Chowder like this
+        Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY, this);
+        //You can then use an override of the processPayment() method to process individual payments like this
+        chowder.processPayment(amount, phoneNumber, productId,  new PaymentListener() {
+            @Override
+            public void onPaymentReady(String returnCode, String processDescription, String merchantTransactionId, String transactionId) {
+                    //The user is now waiting to enter their PIN on the Safaricom push USSD
+                    //Show the user something cause it might be awkward just sitting there
+                    //You can use the transaction id provided to confirm payment to make sure you store the ids somewhere if you want the user to be able to check later
+
+            }
+            @Override
+            public void onPaymentSuccess(String merchantId, String phoneNumber, String amount, String mpesaTransactionDate, String mpesaTransactionId, String transactionStatus, String returnCode, String processDescription, String merchantTransactionId, String encParams, String transactionId) {
+                    //The payment was successful, and real money has moved from the user to the PayBill account
+            }
+            @Override
+            public void onPaymentFailure(String merchantId, String phoneNumber, String amount, String transactionStatus, String processDescription) {
+                   //The payment failed. The user most probably cancelled the transaction. They can always try again.
+            }
+            }););
+
 ##Conclusion
 
 And you are done! Get more code in the sample project.
