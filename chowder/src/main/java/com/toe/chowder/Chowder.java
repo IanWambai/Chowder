@@ -82,6 +82,18 @@ public class Chowder {
         this.passkey = passkey;
     }
 
+    public Chowder(Activity activity, String merchantId, String passkey) {
+        this.activity = activity;
+        this.merchantId = merchantId;
+        this.passkey = passkey;
+    }
+
+    public void processPayment(String amount, String phoneNumber, String productId, PaymentListener paymentCompleteListener) {
+        this.paymentCompleteListener = paymentCompleteListener;
+
+        processPayment(amount, phoneNumber, productId);
+    }
+
     public void processPayment(String amount, String phoneNumber, String productId) {
         progress = ProgressDialog.show(activity, "Please wait",
                 "Connecting to Safaricom...", true);
@@ -99,6 +111,7 @@ public class Chowder {
         SOAP11Request<ProcessCheckoutResponse> processCheckoutRequest = requestFactory.buildRequest(url, new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod), soapAction, ProcessCheckoutResponse.class);
         processCheckoutRequest.execute(processCheckoutObserver);
     }
+
 
     private void trustEveryone() {
         try {
