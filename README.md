@@ -1,4 +1,4 @@
-#Chowder M-Pesa Checkout Android Libarary
+#Chowder M-Pesa Checkout Android Library
 
 This library, using the M-Pesa C2B APIs will allow you to prompt a user to make a payment from their M-Pesa account to a PayBill number without having to leave your app. 
 
