@@ -61,6 +61,9 @@ Get the test `PAYBILL_NUMBER ` and `PASSKEY` from the sample project.
         //You can create a single global variable for Chowder like this
         Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, PASSKEY, this);
 
+        //You can also add your callback URL using this constructor
+        Chowder chowder = new Chowder(YourActivity.this, PAYBILL_NUMBER, callbackUrl ,PASSKEY, this);
+
         //You can then use processPayment() to process individual payments
         chowder.processPayment(amount, phoneNumber, productId);
 
