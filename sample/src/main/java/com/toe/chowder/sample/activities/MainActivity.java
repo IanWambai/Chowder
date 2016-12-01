@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
 
     @Override
     public void onPaymentFailure(String merchantId, String msisdn, String amount, String transactionStatus, String processDescription) {
-        //The payment failed.
+        //The payment has failed.
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Payment failed")
                 .setMessage(transactionStatus + ". Your amount of Ksh." + amount + " was not paid from " + msisdn + " to PayBill number " + merchantId + ". Please try again.")
