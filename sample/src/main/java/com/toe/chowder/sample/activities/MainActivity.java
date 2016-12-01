@@ -55,10 +55,13 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
             public void onClick(View v) {
                 String amount = etAmount.getText().toString().trim();
                 String phoneNumber = etPhoneNumber.getText().toString().trim();
-                //Your product's ID must have 13 digits
+                //Your product's ID must have 13 characters
                 String productId = "1717171717171";
 
-                chowder.processPayment(amount, phoneNumber.replaceAll("\\+", ""), productId);
+                if (amount.length() > 0 && phoneNumber.length() > 0) {
+                    chowder.processPayment(amount, phoneNumber.replaceAll("\\+", ""), productId);
+                }
+
                 //      That's it! You can now process payments using the M-Pesa API
                 //      IMPORTANT: Any cash you send to the test PayBill number is non-refundable, so use small amounts to test
 
@@ -101,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
     private void checkSubscriptions() {
         //This is how you check whether a single product's subscription is valid
         String productId = "1717171717171";
-        chowder.checkSubscription(productId);
+        boolean isSubscribed = chowder.checkSubscription(productId);
 
         //This is how you retrieve all the product's subscriptions
         ArrayList<Subscription> validatedSubscriptions = chowder.checkAllSubscriptions();
@@ -126,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
 
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Payment in progress")
-                .setMessage("Please wait for a pop up from Safaricom and enter your Bonga PIN")
+                .setMessage("Please wait for a pop up from Safaricom and enter your Bonga PIN.")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setCancelable(false)
                 .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
@@ -142,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
         //When the payment is complete you have the option to subscribe the user
         //This means that after a set period of time you can prompt the user to make another payment if the subscription is invalid
         String productId = "1717171717171";
-        chowder.subscribeForProduct(productId, Chowder.SUBSCRIBE_MONTHLY);
+        chowder.subscribeForProduct(productId, Chowder.SUBSCRIBE_DAILY);
 
         //After a month, if you check the product's subscription it will be invalid, but before it will be valid
 

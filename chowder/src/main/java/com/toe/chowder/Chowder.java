@@ -139,7 +139,12 @@ public class Chowder {
         SharedPreferences sharedPreferences = activity.getSharedPreferences(activity.getPackageName(), Context.MODE_PRIVATE);
 
         try {
-            JSONArray subscriptions = new JSONArray(sharedPreferences.getString("subscriptions", null));
+            JSONArray subscriptions = new JSONArray();
+
+            String subscriptionString = sharedPreferences.getString("subscriptions", null);
+            if (subscriptionString != null) {
+                subscriptions = new JSONArray(subscriptionString);
+            }
 
             JSONObject subscription = new JSONObject();
             subscription.put("productId", productId);
@@ -333,14 +338,14 @@ public class Chowder {
 
     public boolean checkSubscription(String queriedProductId) {
         boolean isSubscriptionValid = false;
-        JSONObject subscription = searchForSubscribedProduct(queriedProductId);
+        JSONObject subscription = searchForSubscription(queriedProductId);
 
         if (subscription != null) {
             try {
                 Date todayDate = new Date();
                 Date subscriptionDate = new Date(subscription.getLong("period"));
 
-                if (subscriptionDate.before(todayDate)) {
+                if (subscriptionDate.after(todayDate)) {
                     isSubscriptionValid = true;
                 }
             } catch (JSONException e) {
@@ -351,50 +356,24 @@ public class Chowder {
         return isSubscriptionValid;
     }
 
-    public ArrayList<Subscription> checkAllSubscriptions() {
-        ArrayList<Subscription> validatedSubscriptions = new ArrayList<>();
-
-        SharedPreferences sharedPreferences = activity.getSharedPreferences(activity.getPackageName(), Context.MODE_PRIVATE);
-        try {
-            JSONArray subscriptions = new JSONArray(sharedPreferences.getString("subscriptions", null));
-
-            for (int i = 0; i < subscriptions.length(); i++) {
-                JSONObject subscription = subscriptions.getJSONObject(i);
-                String productId = subscription.getString("productId");
-                long subscriptionPeriod = subscription.getLong("period");
-                boolean isSubscriptionValid = false;
-
-                Date todayDate = new Date();
-                Date subscriptionDate = new Date(subscription.getLong("period"));
-
-                if (subscriptionDate.before(todayDate)) {
-                    isSubscriptionValid = true;
-                }
-
-                Subscription validatedSubscription = new Subscription(productId, subscriptionPeriod, isSubscriptionValid);
-                validatedSubscriptions.add(validatedSubscription);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        return validatedSubscriptions;
-    }
-
-    private JSONObject searchForSubscribedProduct(String queriedProductId) {
+    private JSONObject searchForSubscription(String queriedProductId) {
         JSONObject queriedSubscription = null;
 
         SharedPreferences sharedPreferences = activity.getSharedPreferences(activity.getPackageName(), Context.MODE_PRIVATE);
         try {
-            JSONArray subscriptions = new JSONArray(sharedPreferences.getString("subscriptions", null));
+            String subscriptionsString = sharedPreferences.getString("subscriptions", null);
 
-            for (int i = 0; i < subscriptions.length(); i++) {
-                JSONObject subscription = subscriptions.getJSONObject(i);
-                String productId = subscription.getString("productId");
+            if (subscriptionsString != null) {
+                JSONArray subscriptions = new JSONArray(subscriptionsString);
 
-                if (productId.equals(queriedProductId)) {
-                    queriedSubscription = subscription;
-                    break;
+                for (int i = 0; i < subscriptions.length(); i++) {
+                    JSONObject subscription = subscriptions.getJSONObject(i);
+                    String productId = subscription.getString("productId");
+
+                    if (productId.equals(queriedProductId)) {
+                        queriedSubscription = subscription;
+                        break;
+                    }
                 }
             }
         } catch (JSONException e) {
@@ -402,5 +381,39 @@ public class Chowder {
         }
 
         return queriedSubscription;
+    }
+
+    public ArrayList<Subscription> checkAllSubscriptions() {
+        ArrayList<Subscription> validatedSubscriptions = new ArrayList<>();
+
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(activity.getPackageName(), Context.MODE_PRIVATE);
+        try {
+            String subscriptionsString = sharedPreferences.getString("subscriptions", null);
+
+            if (subscriptionsString != null) {
+                JSONArray subscriptions = new JSONArray(subscriptionsString);
+
+                for (int i = 0; i < subscriptions.length(); i++) {
+                    JSONObject subscription = subscriptions.getJSONObject(i);
+                    String productId = subscription.getString("productId");
+                    long subscriptionPeriod = subscription.getLong("period");
+                    boolean isSubscriptionValid = false;
+
+                    Date todayDate = new Date();
+                    Date subscriptionDate = new Date(subscription.getLong("period"));
+
+                    if (subscriptionDate.after(todayDate)) {
+                        isSubscriptionValid = true;
+                    }
+
+                    Subscription validatedSubscription = new Subscription(productId, subscriptionPeriod, isSubscriptionValid);
+                    validatedSubscriptions.add(validatedSubscription);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return validatedSubscriptions;
     }
 }

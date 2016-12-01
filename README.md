@@ -94,6 +94,44 @@ You use `PaymentListener` to know the results of the payment processes. There ar
         //The payment failed. The user most probably cancelled the transaction. They can always try again.
     }
 
+####Subscriptions
+
+You can subscribe the user for a product or service using Chowder. This means that after a certain period of time the subscription will become invalid and therfore you may charge the user again. Here's how that works:
+    
+    @Override
+    public void onPaymentSuccess(String merchantId, String msisdn, String amount, String mpesaTransactionDate, String mpesaTransactionId, String transactionStatus, String returnCode, String processDescription, String merchantTransactionId, String encParams, String transactionId) {
+        //When the payment is complete you have the option to subscribe the user
+        //This means that after a set period of time you can prompt the user to make another payment if the subscription is invalid
+        String productId = "1717171717171";
+        chowder.subscribeForProduct(productId, Chowder.SUBSCRIBE_DAILY);
+
+        //After a day, if you check the product's subscription it will be invalid, but before it will be valid
+    }
+
+After the user subscribes for a product you can periodically check whether the subscription is valid like this:
+
+    //This is how you check whether a single product's subscription is valid
+    String productId = "1717171717171";
+    boolean isSubscribed = chowder.checkSubscription(productId);
+
+    //This is how you retrieve all the product's subscriptions
+    ArrayList<Subscription> validatedSubscriptions = chowder.checkAllSubscriptions();
+
+    //This how you check a subscribed product's data from the list
+    if (validatedSubscriptions.size() > 0) {
+        Subscription subcribedProduct = validatedSubscriptions.get(0);
+        String subscribedProductId = subcribedProduct.getProductId();
+        boolean isSubscriptionValid = subcribedProduct.isSubscriptionValid();
+
+        //You get the product Id and whether or not it's subscription is valid
+    }
+
+You can check whether the subscription is valid every time the user tries to access the product or service.
+
+#####Disclaimer
+
+The subscriptions are stored locally, therefore if a user clears the app's data or uninstalls it, the subscriptions will be lost. This will mean a user potentially won't get access to a product or service they paid for.
+
 ##Debugging
 
 + You can use the tag "M-PESA REQUEST" to view requests and return codes.
