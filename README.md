@@ -33,7 +33,7 @@ You can easily use Chowder in your Android app for the following cases:
 Add this to the `build.gradle` file of your module
 
     dependencies {
-        compile 'com.toe.chowder:chowder:0.6.5'
+        compile 'com.toe.chowder:chowder:0.7.6'
     }
 
 *The minSdkVersion is 9*
@@ -134,7 +134,7 @@ The subscriptions are stored locally, therefore if a user clears the app's data 
 
 ##Debugging
 
-+ You can use the tag "M-PESA REQUEST" to view requests and return codes.
++ You can use the Log tag "M-PESA REQUEST" to view any errors or exceptions.
 + If you get errors, look up the response code (which will be toasted and also logged) in the Developers Guide under Reference Faults. Find it [here](https://github.com/IanWambai/Chowder/tree/master/files/m-pesa_developers_guide.doc).
 
 ##Other Platforms
