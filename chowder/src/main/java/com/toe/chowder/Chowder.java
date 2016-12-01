@@ -82,6 +82,14 @@ public class Chowder {
         this.passkey = passkey;
     }
 
+    public Chowder(Activity activity, String merchantId, String passkey, String callBackUrl, PaymentListener paymentCompleteListener) {
+        this.paymentCompleteListener = paymentCompleteListener;
+        this.activity = activity;
+        this.merchantId = merchantId;
+        this.passkey = passkey;
+        this.callBackUrl = callBackUrl;
+    }
+
     public void processPayment(String amount, String phoneNumber, String productId) {
         progress = ProgressDialog.show(activity, "Please wait",
                 "Connecting to Safaricom...", true);
