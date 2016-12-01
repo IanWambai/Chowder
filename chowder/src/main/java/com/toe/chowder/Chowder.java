@@ -108,7 +108,6 @@ public class Chowder {
 
 //      The Merchant captures the payment details and prepares call to the SAG’s endpoint.
 //      The Merchant invokes SAG’s processCheckOut interface.
-        Log.d("M-PESA REQUEST", new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod).toString());
 
         Utils.trustEveryone();
         SOAP11Request<ProcessCheckoutResponse> processCheckoutRequest = requestFactory.buildRequest(url, new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod), soapAction, ProcessCheckoutResponse.class);
@@ -169,8 +168,6 @@ public class Chowder {
                 String encParams = request.getResult().getEncParams();
                 String customMessage = request.getResult().getCustomMessage();
 
-                Log.d("M-PESA REQUEST", "Return code: " + returnCode);
-
 //                The SAG validates the request sent and returns a response.
 //                Merchant receives the processCheckoutResponse parameters namely
 //                TRX_ID, ENC_PARAMS, RETURN_CODE, DESCRIPTION and
@@ -210,8 +207,6 @@ public class Chowder {
                 .setCancelable(false)
                 .setPositiveButton("Pay", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d("M-PESA REQUEST", new TransactionConfirmEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId).toString());
-
                         progress = ProgressDialog.show(context, "Please wait",
                                 "Processing your payment...", true);
                         SOAP11Request<TransactionConfirmResponse> transactionConfirmRequest = requestFactory.buildRequest(url, new TransactionConfirmEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId), soapAction, TransactionConfirmResponse.class);
@@ -239,8 +234,6 @@ public class Chowder {
                 String processDescription = request.getResult().getDescription();
                 String merchantTransactionId = request.getResult().getMerchantTransactionId();
                 String transactionId = request.getResult().getTransactionId();
-
-                Log.d("M-PESA REQUEST", "Return code: " + returnCode);
 
                 if (returnCode.equals(SUCCESS_CODE)) {
                     progress.dismiss();
@@ -272,7 +265,6 @@ public class Chowder {
         timestamp = Utils.generateTimestamp();
         merchantTransactionId = Utils.generateRandomId();
         password = Utils.generatePassword(merchantId + passkey + timestamp).replaceAll("\\s+", "");
-        Log.d("M-PESA REQUEST", new TransactionStatusQueryEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId).toString());
 
         Utils.trustEveryone();
         SOAP11Request<TransactionStatusQueryResponse> transactionStatusQueryRequest = requestFactory.buildRequest(url, new TransactionStatusQueryEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId), soapAction, TransactionStatusQueryResponse.class);
@@ -294,8 +286,6 @@ public class Chowder {
                 String merchantTransactionId = request.getResult().getMerchantTransactionId();
                 String encParams = request.getResult().getEncParams();
                 String transactionId = request.getResult().getTransactionId();
-
-                Log.d("M-PESA REQUEST", "Mpesa transaction id: " + mpesaTransactionId);
 
                 if (returnCode.equals(SUCCESS_CODE)) {
                     progress.dismiss();
