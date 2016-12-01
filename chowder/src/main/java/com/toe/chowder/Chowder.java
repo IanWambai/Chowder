@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
@@ -15,6 +16,7 @@ import com.alexgilleran.icesoap.request.RequestFactory;
 import com.alexgilleran.icesoap.request.SOAP11Request;
 import com.alexgilleran.icesoap.request.impl.RequestFactoryImpl;
 import com.alexgilleran.icesoap.soapfault.SOAP11Fault;
+import com.toe.chowder.data.Subscription;
 import com.toe.chowder.envelopes.ProcessCheckoutEnvelope;
 import com.toe.chowder.envelopes.TransactionConfirmEnvelope;
 import com.toe.chowder.envelopes.TransactionStatusQueryEnvelope;
@@ -24,15 +26,13 @@ import com.toe.chowder.responses.TransactionConfirmResponse;
 import com.toe.chowder.responses.TransactionStatusQueryResponse;
 import com.toe.chowder.utils.Utils;
 
-import java.security.SecureRandom;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.X509TrustManager;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 
 /**
@@ -64,16 +64,24 @@ public class Chowder {
     //Payment parameters
     private String merchantId;
     private String passkey;
-
-    private Activity activity;
-    private ProgressDialog progress;
     private String merchantTransactionId;
-
     private String timestamp;
     private String password;
 
     //Listeners
     PaymentListener paymentCompleteListener;
+
+    //Subscriptions
+    public final static int SUBSCRIBE_DAILY = 1;
+    public final static int SUBSCRIBE_WEEKLY = 2;
+    public final static int SUBSCRIBE_MONTHLY = 3;
+    public final static int SUBSCRIBE_YEARLY = 4;
+
+    private int SELECTED_SUBSCRIPTION = 0;
+
+    //Others
+    private Activity activity;
+    private ProgressDialog progress;
 
     public Chowder(Activity activity, String merchantId, String passkey, PaymentListener paymentCompleteListener) {
         this.paymentCompleteListener = paymentCompleteListener;
@@ -91,8 +99,7 @@ public class Chowder {
     }
 
     public void processPayment(String amount, String phoneNumber, String productId) {
-        progress = ProgressDialog.show(activity, "Please wait",
-                "Connecting to Safaricom...", true);
+        progress = ProgressDialog.show(activity, "Please wait", "Connecting to Safaricom...", true);
 
         String referenceId = productId;
         timestamp = Utils.generateTimestamp();
@@ -103,35 +110,45 @@ public class Chowder {
 //      The Merchant invokes SAG’s processCheckOut interface.
         Log.d("M-PESA REQUEST", new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod).toString());
 
-        trustEveryone();
+        Utils.trustEveryone();
         SOAP11Request<ProcessCheckoutResponse> processCheckoutRequest = requestFactory.buildRequest(url, new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod), soapAction, ProcessCheckoutResponse.class);
         processCheckoutRequest.execute(processCheckoutObserver);
     }
 
-    private void trustEveryone() {
+    public void subscribeForProduct(String productId, int subscriptionPlan) {
+        Calendar calendar = Calendar.getInstance();
+        switch (subscriptionPlan) {
+            case SUBSCRIBE_DAILY:
+                calendar.add(Calendar.DATE, 1);
+                break;
+            case SUBSCRIBE_WEEKLY:
+                calendar.add(Calendar.DATE, 7);
+                break;
+            case SUBSCRIBE_MONTHLY:
+                calendar.add(Calendar.DATE, 30);
+                break;
+            case SUBSCRIBE_YEARLY:
+                calendar.add(Calendar.DATE, 365);
+                break;
+        }
+
+        saveSubscription(productId, calendar.getTimeInMillis());
+    }
+
+    private void saveSubscription(String productId, long subscriptionPeriod) {
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(activity.getPackageName(), Context.MODE_PRIVATE);
+
         try {
-            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
-            SSLContext context = SSLContext.getInstance("TLS");
-            context.init(null, new X509TrustManager[]{new X509TrustManager() {
-                public void checkClientTrusted(X509Certificate[] chain,
-                                               String authType) throws CertificateException {
-                }
+            JSONArray subscriptions = new JSONArray(sharedPreferences.getString("subscriptions", null));
 
-                public void checkServerTrusted(X509Certificate[] chain,
-                                               String authType) throws CertificateException {
-                }
+            JSONObject subscription = new JSONObject();
+            subscription.put("productId", productId);
+            subscription.put("period", subscriptionPeriod);
 
-                public X509Certificate[] getAcceptedIssuers() {
-                    return new X509Certificate[0];
-                }
-            }}, new SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(
-                    context.getSocketFactory());
-        } catch (Exception e) { // should never happen
+            subscriptions.put(subscription);
+
+            sharedPreferences.edit().putString("subscriptions", subscriptions.toString()).apply();
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -252,7 +269,7 @@ public class Chowder {
         password = Utils.generatePassword(merchantId + passkey + timestamp).replaceAll("\\s+", "");
         Log.d("M-PESA REQUEST", new TransactionStatusQueryEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId).toString());
 
-        trustEveryone();
+        Utils.trustEveryone();
         SOAP11Request<TransactionStatusQueryResponse> transactionStatusQueryRequest = requestFactory.buildRequest(url, new TransactionStatusQueryEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId), soapAction, TransactionStatusQueryResponse.class);
         transactionStatusQueryRequest.execute(transactionStatusQueryObserver);
     }
@@ -312,5 +329,78 @@ public class Chowder {
 
     private void paymentFailure(String merchantId, String msisdn, String amount, String transactionStatus, String processDescription) {
         paymentCompleteListener.onPaymentFailure(merchantId, msisdn, amount, transactionStatus, processDescription);
+    }
+
+    public boolean checkSubscription(String queriedProductId) {
+        boolean isSubscriptionValid = false;
+        JSONObject subscription = searchForSubscribedProduct(queriedProductId);
+
+        if (subscription != null) {
+            try {
+                Date todayDate = new Date();
+                Date subscriptionDate = new Date(subscription.getLong("period"));
+
+                if (subscriptionDate.before(todayDate)) {
+                    isSubscriptionValid = true;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return isSubscriptionValid;
+    }
+
+    public ArrayList<Subscription> checkAllSubscriptions() {
+        ArrayList<Subscription> validatedSubscriptions = new ArrayList<>();
+
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(activity.getPackageName(), Context.MODE_PRIVATE);
+        try {
+            JSONArray subscriptions = new JSONArray(sharedPreferences.getString("subscriptions", null));
+
+            for (int i = 0; i < subscriptions.length(); i++) {
+                JSONObject subscription = subscriptions.getJSONObject(i);
+                String productId = subscription.getString("productId");
+                long subscriptionPeriod = subscription.getLong("period");
+                boolean isSubscriptionValid = false;
+
+                Date todayDate = new Date();
+                Date subscriptionDate = new Date(subscription.getLong("period"));
+
+                if (subscriptionDate.before(todayDate)) {
+                    isSubscriptionValid = true;
+                }
+
+                Subscription validatedSubscription = new Subscription(productId, subscriptionPeriod, isSubscriptionValid);
+                validatedSubscriptions.add(validatedSubscription);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return validatedSubscriptions;
+    }
+
+    private JSONObject searchForSubscribedProduct(String queriedProductId) {
+        JSONObject queriedSubscription = null;
+
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(activity.getPackageName(), Context.MODE_PRIVATE);
+        try {
+            JSONArray subscriptions = new JSONArray(sharedPreferences.getString("subscriptions", null));
+
+            for (int i = 0; i < subscriptions.length(); i++) {
+                JSONObject subscription = subscriptions.getJSONObject(i);
+                String productId = subscription.getString("productId");
+
+                if (productId.equals(queriedProductId)) {
+                    queriedSubscription = subscription;
+                    break;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return queriedSubscription;
     }
 }

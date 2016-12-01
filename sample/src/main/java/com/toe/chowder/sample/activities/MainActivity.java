@@ -12,8 +12,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.toe.chowder.Chowder;
+import com.toe.chowder.data.Subscription;
 import com.toe.chowder.interfaces.PaymentListener;
 import com.toe.chowder.sample.R;
+
+import java.util.ArrayList;
 
 /**
  * Created by Wednesday on 1/20/2016.
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
         setContentView(R.layout.main_activity);
 
         setUp();
+        checkSubscriptions();
     }
 
     private void setUp() {
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
                 //      IMPORTANT: Any cash you send to the test PayBill number is non-refundable, so use small amounts to test
 
 
-                //   ##What's happening:
+                //      What's happening:
                 //      The Merchant captures the payment details and prepares call to the SAG’s endpoint
                 //      The Merchant invokes SAG’s processCheckOut interface
                 //      The SAG validates the request sent and returns a response
@@ -94,6 +98,24 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
         }
     }
 
+    private void checkSubscriptions() {
+        //This is how you check whether a single product's subscription is valid
+        String productId = "1717171717171";
+        chowder.checkSubscription(productId);
+
+        //This is how you retrieve all the product's subscriptions
+        ArrayList<Subscription> validatedSubscriptions = chowder.checkAllSubscriptions();
+
+        //This how you check a subscribed product's data from the list
+        if (validatedSubscriptions.size() > 0) {
+            Subscription subcribedProduct = validatedSubscriptions.get(0);
+            String subscribedProductId = subcribedProduct.getProductId();
+            boolean isSubscriptionValid = subcribedProduct.isSubscriptionValid();
+
+            //You get the product Id and whether or not it's subscription is valid
+        }
+    }
+
     @Override
     public void onPaymentReady(String returnCode, String processDescription, String merchantTransactionId, String transactionId) {
         //The user is now waiting to enter their PIN
@@ -117,6 +139,13 @@ public class MainActivity extends AppCompatActivity implements PaymentListener {
 
     @Override
     public void onPaymentSuccess(String merchantId, String msisdn, String amount, String mpesaTransactionDate, String mpesaTransactionId, String transactionStatus, String returnCode, String processDescription, String merchantTransactionId, String encParams, String transactionId) {
+        //When the payment is complete you have the option to subscribe the user
+        //This means that after a set period of time you can prompt the user to make another payment if the subscription is invalid
+        String productId = "1717171717171";
+        chowder.subscribeForProduct(productId, Chowder.SUBSCRIBE_MONTHLY);
+
+        //After a month, if you check the product's subscription it will be invalid, but before it will be valid
+
         //The payment was successful.
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("Payment confirmed")
