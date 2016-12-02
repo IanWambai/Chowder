@@ -129,6 +129,13 @@ After the user subscribes for a product you can periodically check whether the s
         //You get the product Id and whether or not it's subscription is valid
     }
 
+Here are the subscription periods:
+
+    Chowder.SUBSCRIBE_DAILY;
+    Chowder.SUBSCRIBE_WEEKLY;
+    Chowder.SUBSCRIBE_MONTHLY;
+    Chowder.SUBSCRIBE_YEARLY;
+
 You can check whether the subscription is valid every time the user tries to access the product or service.
 
 #####Disclaimer
