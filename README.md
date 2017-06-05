@@ -1,4 +1,4 @@
-#Chowder M-Pesa Checkout Android Library
+# Chowder M-Pesa Checkout Android Library
 
 This library, using the M-Pesa C2B APIs will allow you to prompt a user to make a payment from their M-Pesa account to a PayBill number without having to leave your app. 
 
@@ -6,7 +6,7 @@ For successful requests, Safaricom will send a push USSD to the user's mobile de
 
 Get the sample apk from [here](https://github.com/IanWambai/Chowder/tree/master/sample/chowder_sample.apk), click on 'View the full file' to download it, or find it in the 'sample' folder:
 
-##Screenshots
+## Screenshots
 
 The screenshots below show how it works.
 
@@ -18,7 +18,7 @@ The screenshots below show how it works.
 ![](images/ussd_accept.png?raw=true)
 ![](images/transaction_done.png?raw=true)
 
-##Use Cases
+## Use Cases
 
 You can easily use Chowder in your Android app for the following cases:
 * Having a user pay before accessing your app, or certain features in your app.
@@ -28,7 +28,7 @@ You can easily use Chowder in your Android app for the following cases:
 * Subscribing a user and having them pay again after a set period of time.
 * Any form of payment you need a user to make for you to provide them goods/services via Android.
 
-##Usage
+## Usage
 
 Add this to the `build.gradle` file of your module
 
@@ -38,7 +38,7 @@ Add this to the `build.gradle` file of your module
 
 *The minSdkVersion is 9*
 
-##Parameters
+## Parameters
 
 You're going to need some parameters beforehand in order to successfully receive payments:
 
@@ -50,9 +50,9 @@ You're going to need some parameters beforehand in order to successfully receive
 
 You must provide all of these parameters or else you will receive an error.
 
-##Sample Code
+## Sample Code
 
-####Process payment:
+#### Process payment:
 
 This is how you initialize the Chowder object and process a payment.
 
@@ -69,14 +69,14 @@ Get the test `PAYBILL_NUMBER ` and `PASSKEY` from the sample project.
 
 Guess what? You're done! All you have to do is wait for the user to make the payment.
 
-####Confirm payment:
+#### Confirm payment:
 
 This is how you confirm whether a user has paid or not, so you can then take the necessary action.
 
     chowder.checkTransactionStatus(PAYBILL_NUMBER, transactionId);
     //Use the transaction id provided by the PaymentListener
 
-####Interface
+#### Interface
 
 You use `PaymentListener` to know the results of the payment processes. There are three methods:
 
@@ -97,7 +97,7 @@ You use `PaymentListener` to know the results of the payment processes. There ar
         //The payment failed. The user most probably cancelled the transaction. They can always try again.
     }
 
-####Subscriptions
+#### Subscriptions
 
 You can subscribe the user for a product or service using Chowder. This means that after a certain period of time the subscription will become invalid and therfore you may charge the user again. Here's how that works:
     
@@ -138,22 +138,22 @@ Here are the subscription periods:
 
 You can check whether the subscription is valid every time the user tries to access the product or service.
 
-#####Disclaimer
+##### Disclaimer
 
 The subscriptions are stored locally, therefore if a user clears the app's data or uninstalls it, the subscriptions will be lost. This will mean a user potentially won't get access to a product or service they paid for.
 
-##Debugging
+## Debugging
 
 + You can use the Log tag "M-PESA REQUEST" to view any errors or exceptions.
 + If you get errors, look up the response code (which will be toasted and also logged) in the Developers Guide under Reference Faults. Find it [here](https://github.com/IanWambai/Chowder/tree/master/files/m-pesa_developers_guide.doc).
 
-##Other Platforms
+## Other Platforms
 
-####PHP
+#### PHP
 If you would like to use the M-Pesa API for a PHP project, find a PHP implementation [here](https://github.com/icrackthecode/MPESA-API).
 
 
-##Conclusion
+## Conclusion
 
 And you are done! Get more code in the sample project.
 
