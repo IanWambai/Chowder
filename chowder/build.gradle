@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/IanWambai/Chowder'
     gitUrl = 'https://github.com/IanWambai/Chowder.git'
 
-    libraryVersion = '0.7.6'
+    libraryVersion = '0.8.1'
 
     developerId = 'ianwambai'
     developerName = 'Ian Wambai'
@@ -32,8 +32,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 25
-        versionCode 3
-        versionName "0.7.6"
+        versionCode 4
+        versionName "0.8.1"
     }
 
     buildTypes {
