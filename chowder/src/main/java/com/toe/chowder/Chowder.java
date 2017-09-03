@@ -112,7 +112,6 @@ public class Chowder {
 //      The Merchant captures the payment details and prepares call to the SAG’s endpoint.
 //      The Merchant invokes SAG’s processCheckOut interface.
 
-        ChowderUtils.trustEveryone();
         SOAP11Request<ProcessCheckoutResponse> processCheckoutRequest = requestFactory.buildRequest(url, new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod), soapAction, ProcessCheckoutResponse.class);
         processCheckoutRequest.execute(processCheckoutObserver);
     }
@@ -269,7 +268,6 @@ public class Chowder {
         merchantTransactionId = ChowderUtils.generateRandomId();
         password = ChowderUtils.generatePassword(merchantId + passkey + timestamp).replaceAll("\\s+", "");
 
-        ChowderUtils.trustEveryone();
         SOAP11Request<TransactionStatusQueryResponse> transactionStatusQueryRequest = requestFactory.buildRequest(url, new TransactionStatusQueryEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId), soapAction, TransactionStatusQueryResponse.class);
         transactionStatusQueryRequest.execute(transactionStatusQueryObserver);
     }
