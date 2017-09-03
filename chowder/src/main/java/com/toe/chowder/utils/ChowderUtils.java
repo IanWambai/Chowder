@@ -1,8 +1,15 @@
 package com.toe.chowder.utils;
 
+import android.content.Context;
 import android.util.Base64;
 
+import com.toe.chowder.R;
+
+import org.apache.http.conn.ssl.SSLSocketFactory;
+
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.KeyStore;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -107,6 +114,33 @@ public class ChowderUtils {
                     context.getSocketFactory());
         } catch (Exception e) { // should never happen
             e.printStackTrace();
+        }
+    }
+
+    public static SSLSocketFactory hostnameVerification(Context context) {
+        try {
+            // Get an instance of the Bouncy Castle KeyStore format
+            KeyStore trusted = KeyStore.getInstance("BKS");
+            // Get the raw resource, which contains the keystore with
+            // your trusted certificates (root and any intermediate certs)
+            InputStream in = context.getResources().openRawResource(R.raw.safaricom_keystore);
+            try {
+                // Initialize the keystore with the provided trusted certificates
+                // Also provide the password of the keystore
+                trusted.load(in, "ch0wder1".toCharArray());
+            } finally {
+                in.close();
+            }
+            // Pass the keystore to the SSLSocketFactory. The factory is responsible
+            // for the verification of the server certificate.
+            SSLSocketFactory sf = new SSLSocketFactory(trusted);
+            // Hostname verification from certificate
+            // http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d4e506
+            sf.setHostnameVerifier(SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
+
+            return sf;
+        } catch (Exception e) {
+            throw new AssertionError(e);
         }
     }
 }
