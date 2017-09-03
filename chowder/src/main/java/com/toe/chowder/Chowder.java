@@ -54,8 +54,8 @@ public class Chowder {
     private RequestFactory requestFactory = new RequestFactoryImpl();
 
     //Need the url and SOAP action
-    private String url = "https://safaricom.co.ke/mpesa_online/lnmo_checkout_server.php?wsdl";
-    private String soapAction = "https://safaricom.co.ke/mpesa_online/lnmo_checkout_server.php?wsdl";
+    private String url = "https://www.safaricom.co.ke/mpesa_online/lnmo_checkout_server.php?wsdl";
+    private String soapAction = "https://www.safaricom.co.ke/mpesa_online/lnmo_checkout_server.php?wsdl";
 
     //M-Pesa checkout parameters
     private String encParams = "";
