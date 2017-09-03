@@ -22,7 +22,7 @@ import javax.net.ssl.X509TrustManager;
 /**
  * Created by Wednesday on 1/16/2016.
  */
-public class Utils {
+public class ChowderUtils {
     public static String generateTimestamp() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String timestamp = dateFormat.format(new Date());
@@ -48,7 +48,7 @@ public class Utils {
         try {
             digest = MessageDigest.getInstance("SHA-256");
             digest.update(stringToHash.getBytes());
-            hash = Utils.bytesToHexString(digest.digest());
+            hash = ChowderUtils.bytesToHexString(digest.digest());
         } catch (NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

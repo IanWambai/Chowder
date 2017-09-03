@@ -24,7 +24,7 @@ import com.toe.chowder.interfaces.PaymentListener;
 import com.toe.chowder.responses.ProcessCheckoutResponse;
 import com.toe.chowder.responses.TransactionConfirmResponse;
 import com.toe.chowder.responses.TransactionStatusQueryResponse;
-import com.toe.chowder.utils.Utils;
+import com.toe.chowder.utils.ChowderUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -102,14 +102,14 @@ public class Chowder {
         progress = ProgressDialog.show(activity, "Please wait", "Connecting to Safaricom...", true);
 
         String referenceId = productId;
-        timestamp = Utils.generateTimestamp();
-        merchantTransactionId = Utils.generateRandomId();
-        password = Utils.generatePassword(merchantId + passkey + timestamp).replaceAll("\\s+", "");
+        timestamp = ChowderUtils.generateTimestamp();
+        merchantTransactionId = ChowderUtils.generateRandomId();
+        password = ChowderUtils.generatePassword(merchantId + passkey + timestamp).replaceAll("\\s+", "");
 
 //      The Merchant captures the payment details and prepares call to the SAG’s endpoint.
 //      The Merchant invokes SAG’s processCheckOut interface.
 
-        Utils.trustEveryone();
+        ChowderUtils.trustEveryone();
         SOAP11Request<ProcessCheckoutResponse> processCheckoutRequest = requestFactory.buildRequest(url, new ProcessCheckoutEnvelope(merchantId, password, timestamp, merchantTransactionId, referenceId, amount, phoneNumber, encParams, callBackUrl, callBackMethod), soapAction, ProcessCheckoutResponse.class);
         processCheckoutRequest.execute(processCheckoutObserver);
     }
@@ -262,11 +262,11 @@ public class Chowder {
         progress = ProgressDialog.show(activity, "Please wait",
                 "Checking the transaction status...", true);
 
-        timestamp = Utils.generateTimestamp();
-        merchantTransactionId = Utils.generateRandomId();
-        password = Utils.generatePassword(merchantId + passkey + timestamp).replaceAll("\\s+", "");
+        timestamp = ChowderUtils.generateTimestamp();
+        merchantTransactionId = ChowderUtils.generateRandomId();
+        password = ChowderUtils.generatePassword(merchantId + passkey + timestamp).replaceAll("\\s+", "");
 
-        Utils.trustEveryone();
+        ChowderUtils.trustEveryone();
         SOAP11Request<TransactionStatusQueryResponse> transactionStatusQueryRequest = requestFactory.buildRequest(url, new TransactionStatusQueryEnvelope(merchantId, password, timestamp, transactionId, merchantTransactionId), soapAction, TransactionStatusQueryResponse.class);
         transactionStatusQueryRequest.execute(transactionStatusQueryObserver);
     }

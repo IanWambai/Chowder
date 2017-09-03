@@ -27,6 +27,7 @@ ext {
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+    useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
         minSdkVersion 9
