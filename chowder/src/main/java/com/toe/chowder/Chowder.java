@@ -16,6 +16,7 @@ import com.alexgilleran.icesoap.request.RequestFactory;
 import com.alexgilleran.icesoap.request.SOAP11Request;
 import com.alexgilleran.icesoap.request.impl.RequestFactoryImpl;
 import com.alexgilleran.icesoap.soapfault.SOAP11Fault;
+import com.toe.chowder.classes.ChowderSOAPRequester;
 import com.toe.chowder.data.Subscription;
 import com.toe.chowder.envelopes.ProcessCheckoutEnvelope;
 import com.toe.chowder.envelopes.TransactionConfirmEnvelope;
@@ -88,6 +89,7 @@ public class Chowder {
         this.activity = activity;
         this.merchantId = merchantId;
         this.passkey = passkey;
+        requestFactory.setSOAPRequester(new ChowderSOAPRequester(activity));
     }
 
     public Chowder(Activity activity, String merchantId, String passkey, String callBackUrl, PaymentListener paymentCompleteListener) {
@@ -96,6 +98,7 @@ public class Chowder {
         this.merchantId = merchantId;
         this.passkey = passkey;
         this.callBackUrl = callBackUrl;
+        requestFactory.setSOAPRequester(new ChowderSOAPRequester(activity));
     }
 
     public void processPayment(String amount, String phoneNumber, String productId) {
