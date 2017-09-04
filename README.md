@@ -32,11 +32,13 @@ You can easily use Chowder in your Android app for the following cases:
 
 ## Usage
 
-Add this to the `build.gradle` file of your module
+Add this to the `build.gradle` file of your module:
 
     dependencies {
         compile 'com.toe.chowder:chowder:0.8.1'
     }
+
+If you are using a version lower than `0.8.1` make sure you switch to this version because it has some [important security updates.](https://github.com/IanWambai/Chowder/issues/14)
 
 *The minSdkVersion is 9*
 
