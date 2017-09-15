@@ -1,7 +1,9 @@
 package com.toe.chowder.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Base64;
+import android.widget.Toast;
 
 import com.toe.chowder.R;
 
@@ -104,6 +106,20 @@ public class ChowderUtils {
             return sslSocketFactory;
         } catch (Exception e) {
             throw new AssertionError(e);
+        }
+    }
+
+    public static void showMessage(Activity activity, String message) {
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public static String encodeBase64(String MPESA_KEY, String MPESA_SECRET) {
+        try {
+            String appKeySecret = MPESA_KEY + ":" + MPESA_SECRET;
+            return Base64.encodeToString(appKeySecret.getBytes("UTF-8"), Base64.DEFAULT);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }

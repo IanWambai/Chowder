@@ -19,6 +19,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.toe.chowder.sample.activities.ChowderRestSample"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="MPESA REST APIs"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name="com.toe.chowder.sample.activities.ChowderSoapSample"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="MPESA SOAP APIs"
+            android:windowSoftInputMode="stateHidden" />
     </application>
-
 </manifest>

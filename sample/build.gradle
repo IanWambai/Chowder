@@ -24,5 +24,5 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile project(':chowder')
-//    compile 'com.toe.chowder:chowder:0.8.1'
+//    compile 'com.toe.chowder:chowder:0.8.2'
 }
