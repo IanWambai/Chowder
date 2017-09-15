@@ -24,15 +24,15 @@ import java.util.ArrayList;
 public class ChowderSoapSample extends AppCompatActivity implements PaymentListener {
 
     //Test parameters you can replace these with your own PayBill details
-    String PAYBILL_NUMBER = "898998";
-    String PASSKEY = "ada798a925b5ec20cc331c1b0048c88186735405ab8d59f968ed4dab89da5515";
+    private String PAYBILL_NUMBER = "898998";
+    private String PASSKEY = "ada798a925b5ec20cc331c1b0048c88186735405ab8d59f968ed4dab89da5515";
 
     //Views
-    EditText etAmount, etPhoneNumber;
-    Button bPay, bConfirm;
+    private EditText etAmount, etPhoneNumber;
+    private Button bPay, bConfirm;
 
     //Chowder
-    ChowderSoap chowder;
+    private ChowderSoap chowder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

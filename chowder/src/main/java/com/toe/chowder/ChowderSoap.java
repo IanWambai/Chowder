@@ -35,10 +35,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-
-/**
- * Created by Wednesday on 1/16/2016.
- */
 public class ChowderSoap {
 
     //      The Merchant captures the payment details and prepares call to the SAG’s endpoint
