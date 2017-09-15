@@ -22,13 +22,13 @@
 
     <Button
         android:id="@+id/bPay"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Pay" />
 
     <Button
         android:id="@+id/bConfirm"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:text="Confirm last transaction" />
 </LinearLayout>

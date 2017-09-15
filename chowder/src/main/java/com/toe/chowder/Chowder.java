@@ -2,7 +2,6 @@ package com.toe.chowder;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -63,6 +62,11 @@ public class Chowder {
     private String COMMAND_BUSINESS_TO_BUSINESS_TRANSFER = "BusinessToBusinessTransfer";
     private String COMMAND_BUSINESS_TRANSFER_MMF_UTILITY = "BusinessTransferFromMMFToUtility";
 
+    //Identifier Types
+    private String TYPE_MSISDN = "1";
+    private String TYPE_TILL_NUMBER = "2";
+    private String TYPE_SHORT_CODE = "4";
+
     //Others
     private ChowderCredentials chowderCredentials;
     private Activity activity;
@@ -83,8 +87,6 @@ public class Chowder {
         String URL = BASE_URL_OAUTH_SANDBOX + API_TYPE_OAUTH + API_VERSION + END_POINT_GENERATE_TOKEN;
         progress = ProgressDialog.show(activity, "Please wait", "Generating access token...", true);
 
-        Log.d("YAYA", URL);
-
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL,
                 new Response.Listener<String>() {
                     @Override
@@ -94,9 +96,10 @@ public class Chowder {
                             accessToken = responseJson.getString("access_token");
                             expiresIn = Integer.parseInt(responseJson.getString("expires_in"));
 
-                            Log.d("YAYA", accessToken);
-
-                            b2cPaymentRequest(COMMAND_BUSINESS_PAYMENT, 1000);
+                            progress.dismiss();
+//                            b2cPaymentRequest(COMMAND_BUSINESS_PAYMENT, 1000);
+//                            b2bPaymentRequest(COMMAND_BUSINESS_BUY_GOODS, 1000);
+                            c2bPaymentRequest(COMMAND_BUSINESS_PAYMENT, 1000);
                         } catch (JSONException e) {
                             showMessage(activity, "Something went wrong: " + e.getMessage());
                             e.printStackTrace();
@@ -126,8 +129,6 @@ public class Chowder {
     public void b2cPaymentRequest(String command, int amount) {
         String URL = BASE_URL_SANDBOX + API_TYPE_B2C + API_VERSION + END_POINT_PAYMENT_REQUEST;
 
-        Log.d("YAYA", URL);
-
         progress = ProgressDialog.show(activity, "Please wait", "Making payment request...", true);
         JSONObject json = new JSONObject();
         try {
@@ -136,7 +137,7 @@ public class Chowder {
             json.put("CommandID", command);
             json.put("Amount", amount);
             json.put("PartyA", chowderCredentials.getShortCode1());
-            json.put("PartyB", chowderCredentials.getShortCode2());
+            json.put("PartyB", chowderCredentials.getMsisdn());
             json.put("Remarks", "Transaction: " + command);
             json.put("QueueTimeOutURL", "http://test.com/mpesa");
             json.put("ResultURL", "http://test.com/mpesa");
@@ -145,12 +146,138 @@ public class Chowder {
             e.printStackTrace();
         }
 
-        Log.d("YAYA", json.toString());
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(URL, json, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    String conversationId = response.getString("ConversationID");
+                    String originatorConversationID = response.getString("OriginatorConversationID");
+                    String responseCode = response.getString("ResponseCode");
+                    String responseDescription = response.getString("ResponseDescription");
+
+                    showMessage(activity, responseDescription);
+
+                    progress.dismiss();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progress.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                showMessage(activity, "Something went wrong: " + error.getMessage());
+                error.printStackTrace();
+                progress.dismiss();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        queue.add(jsonObjectRequest);
+    }
+
+    public void b2bPaymentRequest(String command, int amount) {
+        String URL = BASE_URL_SANDBOX + API_TYPE_B2B + API_VERSION + END_POINT_PAYMENT_REQUEST;
+
+        progress = ProgressDialog.show(activity, "Please wait", "Making payment request...", true);
+        JSONObject json = new JSONObject();
+
+        try {
+            json.put("CommandID", command);
+            json.put("Amount", amount);
+            json.put("PartyA", chowderCredentials.getShortCode1());
+            json.put("SenderIdentifierType", TYPE_SHORT_CODE);
+            json.put("PartyB", chowderCredentials.getShortCode2());
+            json.put("RecieverIdentifierType", TYPE_MSISDN);
+            json.put("Remarks", "Transaction: " + command);
+            json.put("Initiator", chowderCredentials.getInitiatorName());
+            json.put("SecurityCredential", chowderCredentials.getSecurityCredential());
+            json.put("QueueTimeOutURL", "http://test.com/mpesa");
+            json.put("ResultURL", "http://test.com/mpesa");
+            json.put("AccountReference", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(URL, json, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("YAYA", response.toString());
+                try {
+                    String conversationId = response.getString("ConversationID");
+                    String originatorConversationID = response.getString("OriginatorConversationID");
+                    String responseCode = response.getString("ResponseCode");
+                    String responseDescription = response.getString("ResponseDescription");
+
+                    showMessage(activity, responseDescription);
+
+                    progress.dismiss();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                progress.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                showMessage(activity, "Something went wrong: " + error.getMessage());
+                error.printStackTrace();
+                progress.dismiss();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("authorization", "Bearer " + accessToken);
+                return headers;
+            }
+        };
+
+        queue.add(jsonObjectRequest);
+    }
+
+    public void c2bPaymentRequest(String command, int amount) {
+        String URL = BASE_URL_SANDBOX + API_TYPE_B2C + API_VERSION + END_POINT_PAYMENT_REQUEST;
+
+        progress = ProgressDialog.show(activity, "Please wait", "Making payment request...", true);
+        JSONObject json = new JSONObject();
+        try {
+            json.put("CommandID", command);
+            json.put("Amount", amount);
+            json.put("PartyA", chowderCredentials.getShortCode1());
+            json.put("SenderIdentifier", "");
+            json.put("PartyB", chowderCredentials.getMsisdn());
+            json.put("RecieverIdentifierType", "");
+            json.put("Remarks", "Transaction: " + command);
+            json.put("InitiatorName", "http://test.com/mpesa");
+            json.put("SecurityCredential", chowderCredentials.getSecurityCredential());
+            json.put("QueueTimeOutURL", "http://test.com/mpesa");
+            json.put("ResultURL", "http://test.com/mpesa");
+            json.put("AccountReference", "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(URL, json, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    String conversationId = response.getString("ConversationID");
+                    String originatorConversationID = response.getString("OriginatorConversationID");
+                    String responseCode = response.getString("ResponseCode");
+                    String responseDescription = response.getString("ResponseDescription");
+
+                    showMessage(activity, responseDescription);
+
+                    progress.dismiss();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
                 progress.dismiss();
             }
         }, new Response.ErrorListener() {

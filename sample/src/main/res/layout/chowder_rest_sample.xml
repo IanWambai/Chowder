@@ -21,14 +21,20 @@
         android:hint="Phone number to pay. Format: 254700123654" />
 
     <Button
-        android:id="@+id/bPay"
-        android:layout_width="wrap_content"
+        android:id="@+id/bB2c"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Pay" />
+        android:text="B2C Transaction" />
 
     <Button
-        android:id="@+id/bConfirm"
-        android:layout_width="wrap_content"
+        android:id="@+id/bB2b"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:text="Confirm last transaction" />
+        android:text="B2B Transaction" />
+
+    <Button
+        android:id="@+id/bC2b"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="C2B Transaction" />
 </LinearLayout>
