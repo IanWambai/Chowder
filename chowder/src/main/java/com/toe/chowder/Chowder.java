@@ -48,19 +48,19 @@ public class Chowder {
     private String END_POINT_LIPA_NA_MPESA = "processrequest";
 
     //Command IDs
-    private String COMMAND_TRANSACTION_REVERSAL = "TransactionReversal";
-    private String COMMAND_SALARY_PAYMENT = "SalaryPayment";
-    private String COMMAND_BUSINESS_PAYMENT = "BusinessPayment";
-    private String COMMAND_PROMOTION_PAYMENT = "PromotionPayment";
-    private String COMMAND_ACCOUNT_BALANCE = "AccountBalance";
-    private String COMMAND_CUSTOMER_PAY_BILL_ONLINE = "CustomerPayBillOnline";
-    private String COMMAND_TRANSACTION_STATUS_QUERY = "TransactionStatusQuery";
-    private String COMMAND_CHECK_IDENTITY = "CheckIdentity";
-    private String COMMAND_BUSINESS_PAY_BILL = "BusinessPayBill";
-    private String COMMAND_BUSINESS_BUY_GOODS = "BusinessBuyGoods";
-    private String COMMAND_DISBURSE_FUNDS_TO_BUSINESS = "DisburseFundsToBusiness";
-    private String COMMAND_BUSINESS_TO_BUSINESS_TRANSFER = "BusinessToBusinessTransfer";
-    private String COMMAND_BUSINESS_TRANSFER_MMF_UTILITY = "BusinessTransferFromMMFToUtility";
+    public static String COMMAND_TRANSACTION_REVERSAL = "TransactionReversal";
+    public static String COMMAND_SALARY_PAYMENT = "SalaryPayment";
+    public static String COMMAND_BUSINESS_PAYMENT = "BusinessPayment";
+    public static String COMMAND_PROMOTION_PAYMENT = "PromotionPayment";
+    public static String COMMAND_ACCOUNT_BALANCE = "AccountBalance";
+    public static String COMMAND_CUSTOMER_PAY_BILL_ONLINE = "CustomerPayBillOnline";
+    public static String COMMAND_TRANSACTION_STATUS_QUERY = "TransactionStatusQuery";
+    public static String COMMAND_CHECK_IDENTITY = "CheckIdentity";
+    public static String COMMAND_BUSINESS_PAY_BILL = "BusinessPayBill";
+    public static String COMMAND_BUSINESS_BUY_GOODS = "BusinessBuyGoods";
+    public static String COMMAND_DISBURSE_FUNDS_TO_BUSINESS = "DisburseFundsToBusiness";
+    public static String COMMAND_BUSINESS_TO_BUSINESS_TRANSFER = "BusinessToBusinessTransfer";
+    public static String COMMAND_BUSINESS_TRANSFER_MMF_UTILITY = "BusinessTransferFromMMFToUtility";
 
     //Identifier Types
     private String TYPE_MSISDN = "1";
@@ -71,7 +71,6 @@ public class Chowder {
     private ChowderCredentials chowderCredentials;
     private Activity activity;
     private RequestQueue queue;
-    private ProgressDialog progress;
 
     //Generated Values
     private String accessToken;
@@ -85,7 +84,7 @@ public class Chowder {
 
     public void generateAccessToken() {
         String URL = BASE_URL_OAUTH_SANDBOX + API_TYPE_OAUTH + API_VERSION + END_POINT_GENERATE_TOKEN;
-        progress = ProgressDialog.show(activity, "Please wait", "Generating access token...", true);
+        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait", "Generating access token...", true);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, URL,
                 new Response.Listener<String>() {
@@ -97,9 +96,6 @@ public class Chowder {
                             expiresIn = Integer.parseInt(responseJson.getString("expires_in"));
 
                             progress.dismiss();
-//                            b2cPaymentRequest(COMMAND_BUSINESS_PAYMENT, 1000);
-//                            b2bPaymentRequest(COMMAND_BUSINESS_BUY_GOODS, 1000);
-                            c2bPaymentRequest(COMMAND_BUSINESS_PAYMENT, 1000);
                         } catch (JSONException e) {
                             showMessage(activity, "Something went wrong: " + e.getMessage());
                             e.printStackTrace();
@@ -129,7 +125,7 @@ public class Chowder {
     public void b2cPaymentRequest(String command, int amount) {
         String URL = BASE_URL_SANDBOX + API_TYPE_B2C + API_VERSION + END_POINT_PAYMENT_REQUEST;
 
-        progress = ProgressDialog.show(activity, "Please wait", "Making payment request...", true);
+        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait", "Making payment request...", true);
         JSONObject json = new JSONObject();
         try {
             json.put("InitiatorName", chowderCredentials.getInitiatorName());
@@ -185,7 +181,7 @@ public class Chowder {
     public void b2bPaymentRequest(String command, int amount) {
         String URL = BASE_URL_SANDBOX + API_TYPE_B2B + API_VERSION + END_POINT_PAYMENT_REQUEST;
 
-        progress = ProgressDialog.show(activity, "Please wait", "Making payment request...", true);
+        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait", "Making payment request...", true);
         JSONObject json = new JSONObject();
 
         try {
@@ -244,7 +240,7 @@ public class Chowder {
     public void c2bPaymentRequest(String command, int amount) {
         String URL = BASE_URL_SANDBOX + API_TYPE_B2C + API_VERSION + END_POINT_PAYMENT_REQUEST;
 
-        progress = ProgressDialog.show(activity, "Please wait", "Making payment request...", true);
+        final ProgressDialog progress = ProgressDialog.show(activity, "Please wait", "Making payment request...", true);
         JSONObject json = new JSONObject();
         try {
             json.put("CommandID", command);
