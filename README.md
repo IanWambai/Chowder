@@ -1,5 +1,7 @@
 # Chowder M-Pesa Checkout Android Library
 
+### Chowder is based on the M-Pesa SOAP APIs which are being phased out. Unless you explicitly want to work with those APIs, I wouldn't recommend using Chowder, but instead use the [M-Pesa REST APIs](https://developer.safaricom.co.ke/docs). Well, at least until the next version of Chowder is out.
+
 This library, using the M-Pesa C2B APIs will allow you to prompt a user to make a payment from their M-Pesa account to a PayBill number without having to leave your app. 
 
 For successful requests, Safaricom will send a push USSD to the user's mobile device and prompt them to enter their Bonga PIN. Funds will then be transferred from the user's M-Pesa account into your PayBill account after which you can provide the user the goods or services that they have purchased.
